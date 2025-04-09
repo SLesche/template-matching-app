@@ -156,7 +156,7 @@ classdef review_app < matlab.apps.AppBase
             % update the plot and fit values
             % generate fit display
 
-            if table2array(app.method_table(app.baseline_method, "approach")) == "minsq"
+            if app.cfg.approach == "minsq"
                 generate_fit_display(app)
             end
         end
@@ -264,72 +264,6 @@ classdef review_app < matlab.apps.AppBase
             end
         end
 
-        function generate_fit_display(app)
-            % use app.fitting approach and method, erp, bin and then
-            % generate fit values for different b-params
-            % display these using colors in the fit plot
-
-            % generate the color plot indicating the fit for various
-            % b-params
-            b_params = linspace(0, 3, 1000);
-
-            fit_value = zeros(1, length(b_params));
-
-            % This function will provide new latency, fit_cor and fit_dist
-            % estimates for updated a_params and b_params
-            current_erp = app.erp_num;
-            current_bin = app.bin;
-            current_method = app.baseline_method; % this is why here is baseline method
-            time_vec = app.time_vector;
-
-            % Fit the baseline method
-            method_entry = app.method_table(current_method, :);
-            
-            polarity = table2array(method_entry(1, "polarity"));
-            electrodes = table2array(method_entry(1, "electrodes"));
-            window = cell2mat(table2array(method_entry(1, "window")));
-            approach = table2array(method_entry(1, "approach"));
-            if approach == "minsq" || approach == "maxcor"
-               is_template_matching = 1;
-            elseif approach == "area" || approach == "peak" || approach == "liesefeldarea"
-                is_template_matching = 0;
-            else
-                error("Set a proper matching approach")
-            end
-
-            if table2array(method_entry(1, "weight")) ~= "none"
-                weight_function = eval(strcat("@", table2array(method_entry(1, "weight"))));
-            else
-                weight_function = @(time_vector, signal, window) ones(length(time_vector), 1);
-            end
-
-            ga = squeeze(mean(app.erp_mat(:, electrodes, :, current_bin), 1, 'omitnan'));
-            
-            if is_template_matching
-                signal = squeeze(app.erp_mat(current_erp, electrodes, :, current_bin));
-                if all(isnan(signal)) || all(signal == 0)
-                    fit_value = NaN;
-                else
-                    for i = 1:length(b_params)
-                        current_b = b_params(i);
-                        fits = get_fits(time_vec', signal, ga, [window(1) window(2)], polarity, weight_function, app.a_param, current_b);
-                        fit_cor = fits(1);
-                        
-                        % make this maxcor and minsq compatible
-                        fit_value(i) = fit_cor;
-                    end
-                end
-            else
-                % In the case of non-template matching, updating a and b
-                % will not change anything, so we can just extract the
-                % already optimized params
-                fit_value = NaN;
-            end
-
-            plot(app.fit_display, b_params, fit_value)
-            app.fit_xline = xline(app.fit_display, app.b_param);
-        end
-
         function ylimupper_fieldValueChanged(app, event)
             app.ylimupper = app.ylimupper_field.Value;
             plot_latency(app)
@@ -350,7 +284,7 @@ classdef review_app < matlab.apps.AppBase
             hold(app.erp_display, 'on')
             
             current_erp = app.erp_num;
-            electrodes = table2array(app.method_table(app.method, "electrodes"));
+            electrodes = app.cfg.electrodes;
 
             % plot all other bins with color
             for additional_bin = app.additional_bins
