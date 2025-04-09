@@ -4,7 +4,7 @@ classdef review_app < matlab.apps.AppBase
     properties (Access = public)
         review               matlab.ui.Figure
         bin_selection_field  matlab.ui.control.EditField
-        subject_selection_field matlab.ui.control.NumericEditField
+        erp_selection_field matlab.ui.control.NumericEditField
         a_spinner            matlab.ui.control.Spinner
         b_spinner            matlab.ui.control.Spinner
         a_field              matlab.ui.control.NumericEditField
@@ -30,114 +30,43 @@ classdef review_app < matlab.apps.AppBase
     
     % Set properties that the review process needs
     properties (Access = public)
-        erp_mat double % The data matrix with subject X channels X times X bins
+        % Setup
+        erp_mat double % The data matrix with erp X channels X times X bins
         time_vector double % The vector showing times
-        results_mat double % Results matrix with subject X bins X n_params
-        ga_latencies double % Latencies of the grand average
-        subject double % Subject number
-        method double % Method number
-        baseline_method double % Number of method in method table to base review on
-        bin double % Bin
-        method_table table % Information about the fitting method
-        cutoff double % Cutoff for review
-        extreme_pars double % Review extreme bs?
+        results_mat double % Results matrix with erp X bins X n_params
+        ga_latencies double % Latencies of the grand average, should be size [1, n_bins]
+        cfg struct % The configuration structure for the data
+        
+        % Init ERP number and bin
+        erp_num double % ERP number
+        nbins double % number of bins
+        bin_num double % Bin
 
-        review_mat double % Which subject, bin combo is to be reviewed
-        ireview double % Which review we are on
-
+        % Init result matrices
         final_mat double % All information goes in here
 
+        % Init parameters
         a_param double % current a param
         b_param double % current b param
         a_param_continuous double
         b_param_continuous double
 
-        nbins double % number of bins
-
+        % Init Plots
         ga_plot matlab.graphics.chart.primitive.Line
         matched_xline matlab.graphics.chart.decoration.ConstantLine
         additional_bins double
         fit_xline matlab.graphics.chart.decoration.ConstantLine
 
+        % Init plot settings
         ylimupper double % Default params set at beginning
         ylimlower double
     end
 
     % Callbacks that handle component events
     methods (Access = private)
-
-        % Specify review params
-        function specify_review_params(app)
-            % Prompt the user for input using a dialog box
-            prompt = {'Name of dataset:', 'Name of time vector:', 'Name of method table:', 'Baseline method:', 'Cutoff:', 'Y-Limit: Upper', 'Y-Limit: Lower', 'Name of results matrix (optional):', 'Name of GA latencies (optional):'};
-            dlgTitle = 'Set Review Params';
-            numLines = 1;
-            defaultInput = {'erp_data', 'time_vec', 'method_table', '1', '1', '-5', '9', '', ''};
-        
-            userInput = inputdlg(prompt, dlgTitle, numLines, defaultInput);
-        
-            % Handle cancel button press or empty inputs
-            if isempty(userInput)
-                error('User input canceled or empty.');
-            end
-        
-            % Convert baseline method to number
-            userInput{4} = str2double(userInput{4});
-            % Convert cutoff to a double
-            userInput{5} = str2double(userInput{5});
-
-            % Convert limits to a double
-            userInput{6} = str2double(userInput{6});
-            userInput{7} = str2double(userInput{7});
-
-            if isnan(userInput{5})
-                error('Invalid input for Cutoff. Please enter a numeric value.');
-            end
-            
-            app.erp_mat = evalin('base', userInput{1});
-            app.method_table = evalin('base', userInput{3});
-            app.time_vector = evalin('base', userInput{2});
-            app.baseline_method = userInput{4};
-            app.cutoff = userInput{5};
-            app.ylimlower = userInput{6};
-            app.ylimupper = userInput{7};
-            
-            if ~isempty(userInput{8})
-                app.results_mat = evalin('base', userInput{8});
-                n_subjects = size(app.erp_mat, 1);
-                n_params = 5;
-                n_bins = size(app.erp_mat, 4);
-
-                if length(size(app.results_mat)) ~= 3
-                    error('Results matrix does not match the data matrix');
-                end
-                if ~all(size(app.results_mat) == [n_subjects, n_bins, n_params])
-                    error('Results matrix does not match the data matrix');
-                end
-            end
-
-            if ~isempty(userInput{9})
-                app.ga_latencies = evalin('base', userInput{9});
-                n_bins = size(app.erp_mat, 4);
-
-                if length(app.ga_latencies) ~= n_bins
-                    error('This vector should contain one latency per bin');
-                end
-            end
-        end
-
-        % Function fetching the current method, subject, bin combo
+        % Function fetching the current method, erp_num, bin combo
         function update_review_info(app)
-             [app.subject, app.bin] = app.review_mat(app.ireview, :);
-        end
-
-        function init_final_results(app)
-            [n_subjects, n_bins, n_params] = size(app.results_mat);
-
-            final_review_mat = zeros([n_subjects, n_bins, n_params + 1]);
-            final_review_mat(:, :, 1:n_params) = app.results_mat;
-            final_review_mat(:, :, n_params + 1) = 0;
-            app.final_mat = final_review_mat;
+             [app.erp_num, app.bin] = app.review_mat(app.ireview, :);
         end
 
         function [a_param, b_param, latency, fit_cor, fit_dist] = extract_optimized_params(app, source)
@@ -147,9 +76,9 @@ classdef review_app < matlab.apps.AppBase
             % This function just return the previously optimized params by
             % the baseline optimization method
             if source == "original"
-                values = app.results_mat(app.subject, app.bin, :);
+                values = app.results_mat(app.erp_num, app.bin, :);
             else
-                values = app.final_mat(app.subject, app.bin, :);
+                values = app.final_mat(app.erp_num, app.bin, :);
             end
             a_param = values(1);
             b_param = values(2);
@@ -160,8 +89,8 @@ classdef review_app < matlab.apps.AppBase
 
         function [a_param, b_param, latency, fit_cor, fit_dist] = run_new_optimization(app)
             % This function can run a completely new optimization for a
-            % given subject, bin and method
-            current_subject = app.subject;
+            % given erpnum, bin and method
+            current_erp_num = app.erp_num;
             current_bin = app.bin;
             current_method = app.method;
             time_vec = app.time_vector;
@@ -215,7 +144,7 @@ classdef review_app < matlab.apps.AppBase
                 else
                     lat_ga = app.ga_latencies(current_bin);
                 end         
-                signal = squeeze(app.erp_mat(current_subject, electrodes, :, current_bin));
+                signal = squeeze(app.erp_mat(current_erp_num, electrodes, :, current_bin));
                 if all(isnan(signal)) || all(signal == 0)
                     [a_param, b_param, latency, fit_cor, fit_dist] = NaN;
                 else
@@ -231,7 +160,7 @@ classdef review_app < matlab.apps.AppBase
                 end
             else
                 latency = NaN;
-                signal = squeeze(app.erp_mat(app.subject, electrodes, :, app.bin));
+                signal = squeeze(app.erp_mat(app.erp_num, electrodes, :, app.bin));
                 
                 if all(isnan(signal)) || all(signal == 0)
                     [a_param, b_param, latency, fit_cor, fit_dist] = NaN;
@@ -251,7 +180,7 @@ classdef review_app < matlab.apps.AppBase
         function [a_param, b_param, latency, fit_cor, fit_dist] = evaluate_matching_results(app)
             % This function will provide new latency, fit_cor and fit_dist
             % estimates for updated a_params and b_params
-            current_subject = app.subject;
+            current_erp_num = app.erp_num;
             current_bin = app.bin;
             current_method = app.baseline_method; % this is why here is baseline method
             time_vec = app.time_vector;
@@ -285,7 +214,7 @@ classdef review_app < matlab.apps.AppBase
                 else
                     lat_ga = app.ga_latencies(current_bin);
                 end  
-                signal = squeeze(app.erp_mat(current_subject, electrodes, :, current_bin));
+                signal = squeeze(app.erp_mat(current_erp_num, electrodes, :, current_bin));
                 if all(isnan(signal)) || all(signal == 0)
                     [a_param, b_param, latency, fit_cor, fit_dist] = NaN;
                 else
@@ -307,13 +236,13 @@ classdef review_app < matlab.apps.AppBase
         function [legend_text, title_text, subtitle_text] = return_plot_legend(app, approach, b, latency, fit_cor)     
             if approach == "maxcor"
                 proper_latency = round(latency, 2);
-                title_text = {"Individual ERP matched to grand average via minimizing the squared distance", strcat("Method: ", num2str(app.method), " | ERP Number: ", num2str(app.subject))};
-                legend_text = ["Subject ERP", "Matched Grand Average Waveform", strcat("Correlation Fitted ", table2array(app.method_table(app.method, "component_name")))];
+                title_text = {"Individual ERP matched to grand average via minimizing the squared distance", strcat("Method: ", num2str(app.method), " | ERP Number: ", num2str(app.erp_num))};
+                legend_text = ["ERP num", "Matched Grand Average Waveform", strcat("Correlation Fitted ", table2array(app.method_table(app.method, "component_name")))];
                 subtitle_text = {strcat("MAXCOR: Latency = ", num2str(proper_latency)), strcat("MAXCOR: Correlation = ", num2str(fit_cor)), strcat("Stretch Factor = ", num2str(round(b, 2)))};
             elseif approach == "minsq"
                 proper_latency = round(latency, 2);
-                title_text = {"Individual ERP matched to grand average via minimizing the squared distance", strcat("Method: ", num2str(app.method), " | ERP Number: ", num2str(app.subject))};
-                legend_text = ["Subject ERP", "Matched Grand Average Waveform", strcat("Minsq Fitted ", table2array(app.method_table(app.method, "component_name")))];
+                title_text = {"Individual ERP matched to grand average via minimizing the squared distance", strcat("Method: ", num2str(app.method), " | ERP Number: ", num2str(app.erp_num))};
+                legend_text = ["ERP num", "Matched Grand Average Waveform", strcat("Minsq Fitted ", table2array(app.method_table(app.method, "component_name")))];
                 subtitle_text = {strcat("MINSQ: Latency = ", num2str(proper_latency)), strcat("MINSQ: Correlation = ", num2str(fit_cor)), strcat("Stretch Factor = ", num2str(round(b, 2)))};
             end
         end
@@ -321,7 +250,7 @@ classdef review_app < matlab.apps.AppBase
         function plot_latency(app)
             [a_param, b_param, latency, fit_cor, ~] = evaluate_matching_results(app);
 
-            current_subject = app.subject;
+            current_erp_num = app.erp_num;
             current_bin = app.bin;
             current_method = app.baseline_method; % this is why here is baseline method
             time_vec = app.time_vector;
@@ -335,7 +264,7 @@ classdef review_app < matlab.apps.AppBase
             approach = table2array(method_entry(1, "approach"));
             
             ga = squeeze(mean(app.erp_mat(:, electrodes, :, current_bin), 1, 'omitnan'));
-            signal = squeeze(app.erp_mat(current_subject, electrodes, :, current_bin));
+            signal = squeeze(app.erp_mat(current_erp_num, electrodes, :, current_bin));
             
             matched_ga_x = time_vec * b_param;
             matched_ga_y = interpolate_transformed_template(time_vec, ga, 1/a_param, 1/b_param);
@@ -411,7 +340,7 @@ classdef review_app < matlab.apps.AppBase
             %delete(app.matched_xline)
 
             ga_x = app.time_vector;
-            current_subject = app.subject;
+            current_erp_num = app.erp_num;
             current_bin = app.bin;
             current_method = app.baseline_method;
             method_entry = app.method_table(current_method, :);
@@ -454,165 +383,6 @@ classdef review_app < matlab.apps.AppBase
             app.a_spinner.Value = a;
 
             update_fit_display(app);
-        end
-
-        % Function intializing the results_mat
-        function run_template_matching_app(app)
-            % Fit the baseline method
-            baseline_method_entry = app.method_table(app.baseline_method, :);
-            
-            polarity = table2array(baseline_method_entry(1, "polarity"));
-            electrodes = table2array(baseline_method_entry(1, "electrodes"));
-            window = cell2mat(table2array(baseline_method_entry(1, "window")));
-            time_vec = app.time_vector;
-
-            approach = table2array(baseline_method_entry(1, "approach"));
-            if approach == "minsq" || approach == "maxcor"
-               is_template_matching = 1;
-            elseif approach == "area" || approach == "peak" || approach == "liesefeldarea"
-                is_template_matching = 0;
-            else
-                error("Set a proper matching approach")
-            end
-
-            if table2array(baseline_method_entry(1, "weight")) ~= "none"
-                weight_function = eval(strcat("@", table2array(baseline_method_entry(1, "weight"))));
-            else
-                weight_function = @(time_vector, signal, window) ones(length(time_vector), 1);
-            end
-            
-            if table2array(baseline_method_entry(1, "penalty")) ~= "none"
-                penalty_function = eval(strcat("@", table2array(baseline_method_entry(1, "penalty"))));
-            else 
-                penalty_function = @(a, b) 1;
-            end
-            
-            if table2array(baseline_method_entry(1, "normalization")) ~= "none"
-                normalize_function = eval(strcat("@", table2array(baseline_method_entry(1, "normalization")))); 
-            else
-                normalize_function = @(x) x;
-            end
-
-            if table2array(baseline_method_entry(1, "approach")) == "minsq"
-                eval_function = @eval_sum_of_squares;
-            elseif table2array(baseline_method_entry(1, "approach")) == "maxcor"
-                eval_function = @eval_correlation;
-            end
-
-            use_derivative = table2array(baseline_method_entry(1, "use_derivative"));
-            
-            n_subjects = length(app.erp_mat(:, 1, 1, 1));
-            n_params = 5;
-            n_bins = app.nbins;
-
-            results = zeros([n_subjects, n_bins, n_params]);
-
-            for ibin = 1:n_bins
-                match_results = zeros(n_subjects, n_params);
-                % Get the GA here, get corresponding approach and other pars
-                ga = squeeze(mean(app.erp_mat(:, electrodes, :, ibin), 1, 'omitnan'));                            
-                % Get the appropriate measurement window                    
-                if is_template_matching
-                    lat_ga = approx_peak_latency(time_vec, ga, [window(1) window(2)], polarity);
-
-                    % lat_ga = approx_area_latency(time_vec, ga, [window(1) window(2)], polarity, 0.5, true);
-
-                    for isubject = 1:n_subjects
-                        signal = squeeze(app.erp_mat(isubject, electrodes, :, ibin));
-                        if all(isnan(signal)) || all(signal == 0)
-                            match_results(isubject, :) = NaN;
-                        else
-                            try
-                                params = run_global_search(define_optim_problem(specify_objective_function(time_vec', signal, ga, [window(1) window(2)], polarity, weight_function, eval_function, normalize_function ,penalty_function, use_derivative)));
-                            catch ME
-                                    % If an error occurs, log the variables and rethrow the error
-                                disp('--- An error occurred ---');
-                                disp('Error message:');
-                                disp(ME.message);
-                                disp([ibin, isubject])
-                        
-                                % Log the input variables
-                                disp('--- Input Variables ---');
-                                disp('time_vec:');
-                                disp(time_vec);
-                                disp('signal:');
-                                disp(signal);
-                                disp('ga:');
-                                disp(ga);
-                                disp('window:');
-                                disp(window);
-                                disp('polarity:');
-                                disp(polarity);
-                                disp('weight_function:');
-                                disp(weight_function);
-                                disp('eval_function:');
-                                disp(eval_function);
-                                disp('normalize_function:');
-                                disp(normalize_function);
-                                disp('penalty_function:');
-                                disp(penalty_function);
-                                disp('use_derivative:');
-                                disp(use_derivative);
-                                disp('-----------------------');
-                        
-                                % Rethrow the error to handle it further up the call stack if necessary
-                                rethrow(ME);
-                            end
-
-                            match_results(isubject, [1 2]) = params;
-                            match_results(isubject, 3) = return_matched_latency(params(2), lat_ga);
-                            match_results(isubject, [4 5]) = get_fits(time_vec', signal, ga, [window(1) window(2)], polarity, weight_function, params(1), params(2));
-                            
-                        end
-                    end
-                else
-                    for isubject = 1:n_subjects
-                        latency = NaN;
-                        signal = squeeze(app.erp_mat(isubject, electrodes, :, ibin));
-                        
-                        if all(isnan(signal)) || all(signal == 0)
-                            match_results(isubject, :) = NaN;
-                        else
-                            if approach == "area"
-                                latency = approx_area_latency(time_vec, signal, [window(1) window(2)], polarity, 0.5);
-                            elseif approach == "liesefeld_area"
-                                latency = approx_area_latency(time_vec, signal, [window(1) window(2)], polarity, 0.5, true);
-                            elseif approach == "peak"
-                                latency = approx_peak_latency(time_vec, signal, [window(1) window(2)], polarity);
-                            end
-                            match_results(isubject, [1 2 4 5]) = NaN;
-                            match_results(isubject, 3) = latency;
-                        end
-                    end
-                end
-
-                results(:, ibin, :) = match_results;
-            end
-    
-            app.results_mat = results;
-        end
-
-        function flag_for_review(app)
-            temp_review_mat = app.review_mat;
-            
-            results = app.results_mat;
-            
-            [n_subjects, n_bins, ~] = size(results);
-            for isubject = 1:n_subjects
-                for ibin = 1:n_bins
-                    is_low_fit = results(isubject, ibin, 4) <= app.cutoff; 
-                    is_extreme_b = results(isubject, ibin, 2) <= 0.66 || results(isubject, ibin, 2) >= 1.5;
-                    is_extreme_a = results(isubject, ibin, 1) <= 0.2 || results(isubject, ibin, 1) >= 5;
-                    
-                    if app.extreme_pars == 1 && any([is_low_fit, is_extreme_a, is_extreme_b])
-                        temp_review_mat(end+1, :) = [isubject, ibin];
-                    elseif app.extreme_pars == 0 && is_low_fit
-                        temp_review_mat(end+1, :) = [isubject, ibin];
-                    end
-                end
-            end
-
-            app.review_mat = temp_review_mat;
         end
         
         function write_info(app, review, subject, bin, a, b, latency, fit_cor, fit_dist)
@@ -988,25 +758,19 @@ classdef review_app < matlab.apps.AppBase
 
         % Create UIFigure and components
         function createComponents(app)
-
-            % Set initial values
-            app.extreme_pars = 1;
-            app.method = app.baseline_method;
-            app.nbins = length(squeeze(app.erp_mat(1, 1, 1, :)));
-
             % initialize results, fit to everything
             if isempty(app.results_mat)
                 run_template_matching_app(app);
             end
 
-            % Initialize the matrix of reviews
-            flag_for_review(app);
-
             % Initialize final results
             init_final_results(app);
 
+            % Initialize the matrix of reviews
+            flag_for_review(app);
+
             % Initialize which person to review
-            app.ireview = 1;
+            
             app.subject = app.review_mat(app.ireview, 1);
             app.bin = app.review_mat(app.ireview, 2);
 
