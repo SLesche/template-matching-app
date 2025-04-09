@@ -1,10 +1,10 @@
-a% Specify review params
+% Specify review params
 function specify_review_params(app)
     % Prompt the user for input using a dialog box
     prompt = {'Name of dataset:', 'Name of time vector:', 'Name of configuration', 'Name of results matrix (optional):', 'Name of GA latencies (optional):'};
     dlgTitle = 'Set Review Params';
     numLines = 1;
-    defaultInput = {'erp_data', 'time_vec', 'cfg', '', ''};
+    defaultInput = {'erp_data', 'time_vec', 'cfg', 'results_mat', ''};
 
     userInput = inputdlg(prompt, dlgTitle, numLines, defaultInput);
 

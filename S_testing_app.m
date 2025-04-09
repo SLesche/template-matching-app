@@ -32,6 +32,9 @@ cfg.window = [250 700];
 cfg.cutoff = 0.3;
 cfg.extreme_b = 1.5;
 
+%% Run matching
+results_mat = run_template_matching(erp_data, time_vec, cfg);
+
 %% Start review app
 review_app
 
