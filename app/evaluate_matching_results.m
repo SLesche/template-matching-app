@@ -2,7 +2,7 @@ function [a_param, b_param, latency, fit_cor, fit_dist] = evaluate_matching_resu
     % This function will provide new latency, fit_cor and fit_dist
     % estimates for updated a_params and b_params
     current_erp_num = app.erp_num;
-    current_bin = app.bin;
+    current_bin = app.bin_num;
     time_vec = app.time_vector;
 
     polarity = app.cfg.polarity;
@@ -24,7 +24,7 @@ function [a_param, b_param, latency, fit_cor, fit_dist] = evaluate_matching_resu
         weight_function = @(time_vector, signal, window) ones(length(time_vector), 1);
     end
 
-    ga = app.ga_mat(current_bin, :);
+    ga = app.ga_mat(current_bin, :)';
 
     if is_template_matching
         if isempty(app.ga_latencies)

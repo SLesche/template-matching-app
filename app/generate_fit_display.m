@@ -16,10 +16,10 @@ function generate_fit_display(app)
     time_vec = app.time_vector;
 
     % Get the cfg parameters
-    polarity = cfg.polarity;
-    electrodes = cfg.electrodes;
-    window = cfg.window;
-    approach = cfg.approach;
+    polarity = app.cfg.polarity;
+    electrodes = app.cfg.electrodes;
+    window = app.cfg.window;
+    approach = app.cfg.approach;
 
     if approach == "minsq" || approach == "maxcor"
        is_template_matching = 1;
@@ -29,13 +29,13 @@ function generate_fit_display(app)
         error("Set a proper matching approach")
     end
 
-    if table2array(method_entry(1, "weight")) ~= "none"
-        weight_function = eval(strcat("@", table2array(method_entry(1, "weight"))));
+    if app.cfg.weight ~= "none"
+        weight_function = eval(strcat("@", app.cfg.weight));
     else
         weight_function = @(time_vector, signal, window) ones(length(time_vector), 1);
     end
 
-    ga = app.ga_mat(current_bin, :);
+    ga = app.ga_mat(current_bin, :)';
     
     if is_template_matching
         signal = squeeze(app.erp_mat(current_erp, electrodes, :, current_bin));

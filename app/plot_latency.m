@@ -6,12 +6,12 @@ function plot_latency(app)
     time_vec = app.time_vector;
 
     % Get the cfg parameters
-    polarity = cfg.polarity;
-    electrodes = cfg.electrodes;
-    window = cfg.window;
-    approach = cfg.approach;
+    polarity = app.cfg.polarity;
+    electrodes = app.cfg.electrodes;
+    window = app.cfg.window;
+    approach = app.cfg.approach;
     
-    ga = app.ga_mat(current_bin, :);
+    ga = app.ga_mat(current_bin, :)';
     signal = squeeze(app.erp_mat(current_erp_num, electrodes, :, current_bin));
     
     matched_ga_x = time_vec * b_param;

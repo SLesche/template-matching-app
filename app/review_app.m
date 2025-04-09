@@ -73,9 +73,10 @@ classdef review_app < matlab.apps.AppBase
             
             % write reject info into struct
             review_method = -1; % rejected, so -1
-            write_info(app, review_method, app.erp_num, app.bin, a, b, latency, fit_cor, fit_dist)
-            % move ireview            
-            move_ireview(app, 1);
+            write_info(app, review_method, app.erp_num, app.bin_num, a, b, latency, fit_cor, fit_dist)
+
+            jump_to_next_review(app)
+
             % regenerate plot
             restore_default_plot(app)
 
@@ -97,10 +98,10 @@ classdef review_app < matlab.apps.AppBase
 
             % write accepted info into struct
             [a, b, latency, fit_cor, fit_dist] = evaluate_matching_results(app);
-            write_info(app, review_method, app.erp_num, app.bin, a, b, latency, fit_cor, fit_dist)
+            write_info(app, review_method, app.erp_num, app.bin_num, a, b, latency, fit_cor, fit_dist)
 
-            % move ireview
-            move_ireview(app, 1)
+            % move to next review
+            jump_to_next_review(app)
 
             % regenerate plot
             restore_default_plot(app)
@@ -118,8 +119,8 @@ classdef review_app < matlab.apps.AppBase
 
         % Button pushed function: previous_button
         function previous_buttonButtonPushed(app, event)
-           % move ireview
-            move_ireview(app, -1)
+            % move ireview
+            jump_to_previous_review(app)
 
             % regenerate plot
             restore_default_plot(app)
@@ -131,7 +132,7 @@ classdef review_app < matlab.apps.AppBase
         % Button pushed function: previous_button
         function next_buttonButtonPushed(app, event)
             % move ireview
-            move_ireview(app, 1)
+            jump_to_next_review(app)
 
             % regenerate plot
             restore_default_plot(app)
@@ -178,7 +179,7 @@ classdef review_app < matlab.apps.AppBase
         % Value changed function: bin_dropdown
         function bin_dropdownValueChanged(app, event)
             % update app.bin
-            app.bin = str2num(app.bin_dropdown.Value);
+            app.bin_num = str2num(app.bin_dropdown.Value);
 
             [app.a_param, app.b_param, ~, ~, ~] = extract_optimized_params(app);
             [app.a_param_continuous, app.b_param_continuous, ~, ~, ~] = extract_optimized_params(app);
@@ -302,7 +303,7 @@ classdef review_app < matlab.apps.AppBase
         end
 
         function erp_selection_fieldValueChanged(app, event)
-            app.erp_num = app.erp_num_selection_field.Value;
+            app.erp_num = app.erp_selection_field.Value;
 
             [app.a_param, app.b_param] = extract_optimized_params(app);
             [app.a_param_continuous, app.b_param_continuous] = extract_optimized_params(app);
