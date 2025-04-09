@@ -56,10 +56,10 @@ function [results_mat] = run_template_matching_serial(erp_mat, time_vec, cfg)
 
             % lat_ga = approx_area_latency(time_vec, ga, [window(1) window(2)], polarity, 0.5, true);
 
-            for isubject = 1:n_erps
-                signal = squeeze(erp_mat(isubject, electrodes, :, ibin));
+            for ierp = 1:n_erps
+                signal = squeeze(erp_mat(ierp, electrodes, :, ibin));
                 if all(isnan(signal)) || all(signal == 0)
-                    match_results(isubject, :) = NaN;
+                    match_results(ierp, :) = NaN;
                 else
                     try
                         params = run_global_search(define_optim_problem(specify_objective_function(time_vec', signal, ga, [window(1) window(2)], polarity, weight_function, eval_function, normalize_function ,penalty_function, use_derivative, fix_a_param), fix_a_param));
@@ -68,7 +68,7 @@ function [results_mat] = run_template_matching_serial(erp_mat, time_vec, cfg)
                         disp('--- An error occurred ---');
                         disp('Error message:');
                         disp(ME.message);
-                        disp([ibin, isubject])
+                        disp([ibin, ierp])
                 
                         % Log the input variables
                         disp('--- Input Variables ---');
@@ -102,19 +102,19 @@ function [results_mat] = run_template_matching_serial(erp_mat, time_vec, cfg)
                         params = [1 params];
                     end
                     
-                    match_results(isubject, [1 2]) = params;
-                    match_results(isubject, 3) = return_matched_latency(params(2), lat_ga);
-                    match_results(isubject, [4 5]) = get_fits(time_vec', signal, ga, [window(1) window(2)], polarity, weight_function, params(1), params(2));
+                    match_results(ierp, [1 2]) = params;
+                    match_results(ierp, 3) = return_matched_latency(params(2), lat_ga);
+                    match_results(ierp, [4 5]) = get_fits(time_vec', signal, ga, [window(1) window(2)], polarity, weight_function, params(1), params(2));
                     
                 end
             end
         else
-            for isubject = 1:n_erps
+            for ierp = 1:n_erps
                 latency = NaN;
-                signal = squeeze(erp_mat(isubject, electrodes, :, ibin));
+                signal = squeeze(erp_mat(ierp, electrodes, :, ibin));
                 
                 if all(isnan(signal)) || all(signal == 0)
-                    match_results(isubject, :) = NaN;
+                    match_results(ierp, :) = NaN;
                 else
                     if approach == "area"
                         latency = approx_area_latency(time_vec, signal, [window(1) window(2)], polarity, 0.5);
@@ -123,8 +123,8 @@ function [results_mat] = run_template_matching_serial(erp_mat, time_vec, cfg)
                     elseif approach == "peak"
                         latency = approx_peak_latency(time_vec, signal, [window(1) window(2)], polarity);
                     end
-                    match_results(isubject, [1 2 4 5]) = NaN;
-                    match_results(isubject, 3) = latency;
+                    match_results(ierp, [1 2 4 5]) = NaN;
+                    match_results(ierp, 3) = latency;
                 end
             end
         end
