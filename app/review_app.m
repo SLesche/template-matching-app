@@ -16,10 +16,10 @@ classdef review_app < matlab.apps.AppBase
         fit_display          matlab.ui.control.UIAxes
 
         % Init Plots
-        ga_plot             matlab.graphics.chart.primitive.Line
-        matched_xline       matlab.graphics.chart.decoration.ConstantLine
-        additional_bins     double
-        fit_xline           matlab.graphics.chart.decoration.ConstantLine
+        ga_plot              matlab.graphics.chart.primitive.Line
+        matched_xline        matlab.graphics.chart.decoration.ConstantLine
+        additional_bins      double
+        fit_xline            matlab.graphics.chart.decoration.ConstantLine
 
         a_slider             matlab.ui.control.Slider
         aSliderLabel         matlab.ui.control.Label
@@ -43,8 +43,8 @@ classdef review_app < matlab.apps.AppBase
         MainBinLabel         matlab.ui.control.Label
 
         % Overview Table
+        table_window         matlab.ui.Figure
         overview_table       matlab.ui.control.Table
-        overview_table_data  double   % or whatever format your data needs
 
         % Setup Data Structuress
         erp_mat double % The data matrix with erps X channels X times X bins
@@ -511,6 +511,9 @@ classdef review_app < matlab.apps.AppBase
 
             % generate fit plot
             generate_fit_display(app)
+
+            % Init review table
+            init_review_overview_table(app)
 
         end
     end
