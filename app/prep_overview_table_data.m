@@ -1,7 +1,8 @@
 function [table_data] = prep_overview_table_data(final_mat)
     [n_erps, n_bins, n_params] = size(final_mat);
     
-    flat_params = round(reshape(final_mat, [], n_params), 2);  % size: (n_erps * n_bins) x n_params
+    flat_params = reshape(permute(final_mat, [2, 1, 3]), [], n_params); % To make ERPs go first, then bins
+    flat_params = round(flat_params, 2);  % Round to two decimal places
 
     % ERP indices (repeated per bin)
     erp_idx = round(repelem((1:n_erps)', n_bins), 0);  % column vector

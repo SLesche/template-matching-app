@@ -87,11 +87,7 @@ classdef review_app < matlab.apps.AppBase
 
             jump_to_next_review(app)
 
-            % regenerate plot
-            restore_default_plot(app)
-
-            % generate fit plot
-            generate_fit_display(app)
+            load_new_plot(app)
         end
 
         % Button pushed function: manual_button
@@ -113,17 +109,12 @@ classdef review_app < matlab.apps.AppBase
             % move to next review
             jump_to_next_review(app)
 
-            % regenerate plot
-            restore_default_plot(app)
-
-            % generate fit plot
-            generate_fit_display(app)
-
+            load_new_plot(app)
         end
 
         function restore_buttonButtonPushed(app, event)
             % If restore defaults
-            restore_default_plot(app, "original")
+            restore_default_plot(app, "reviewed")
         end
 
 
@@ -132,11 +123,7 @@ classdef review_app < matlab.apps.AppBase
             % move ireview
             jump_to_previous_review(app)
 
-            % regenerate plot
-            restore_default_plot(app)
-
-            % generate fit plot
-            generate_fit_display(app)
+            load_new_plot(app)
         end
 
         % Button pushed function: previous_button
@@ -144,11 +131,7 @@ classdef review_app < matlab.apps.AppBase
             % move ireview
             jump_to_next_review(app)
 
-            % regenerate plot
-            restore_default_plot(app)
-
-            % generate fit plot
-            generate_fit_display(app)
+            load_new_plot(app)
         end
 
         % Value changed function: b_slider

@@ -1,6 +1,6 @@
 function restore_default_plot(app, source)
     if ~exist('source', 'var')
-        source = "original";
+        source = "reviewed";
     end
 
     % reload all plots for that erp, set a and b to their
