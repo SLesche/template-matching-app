@@ -38,6 +38,8 @@ classdef review_app < matlab.apps.AppBase
 
         next_button          matlab.ui.control.Button
         previous_button      matlab.ui.control.Button
+        jumpprevious_button  matlab.ui.control.Button
+        jumppnext_button     matlab.ui.control.Button
         reject_button        matlab.ui.control.Button
         manual_button        matlab.ui.control.Button
         restore_button       matlab.ui.control.Button
@@ -276,8 +278,7 @@ classdef review_app < matlab.apps.AppBase
 
             % Create review and hide until all components are created
             app.review = uifigure('Visible', 'off');
-            app.review.Position = [100 100 762 541];
-            app.review.Name = 'MATLAB App';
+            app.review.Name = 'Review Window';
 
             % Create erp_display
             app.erp_display = uiaxes(app.review);
@@ -430,6 +431,10 @@ classdef review_app < matlab.apps.AppBase
             % Init review table
             init_review_overview_table(app)
 
+            % Set positions
+            set_window_positions(app)
+
+            set_component_positions(app)
         end
     end
 
