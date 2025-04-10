@@ -5,11 +5,11 @@ addpath("functions\")
 addpath("app\")
 
 % Setting paths
-% Get the directory of the currently executing script
+% Save this in a file called 'myScript.m'
 [filepath, ~, ~] = fileparts(mfilename('fullpath'));
-
-% Set the current directory to that directory
 cd(filepath);
+disp("Current folder changed to: " + filepath);
+
 
 % Path for files
 PATH_ERP = fullfile(filepath, "data\flanker_16");

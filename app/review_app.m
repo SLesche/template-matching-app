@@ -2,35 +2,51 @@ classdef review_app < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
+        % Generate Review Window
         review               matlab.ui.Figure
-        bin_selection_field  matlab.ui.control.EditField
-        erp_selection_field matlab.ui.control.NumericEditField
-        a_spinner            matlab.ui.control.Spinner
-        b_spinner            matlab.ui.control.Spinner
-        a_field              matlab.ui.control.NumericEditField
-        b_field              matlab.ui.control.NumericEditField
-        bin_dropdown         matlab.ui.control.DropDown
-        MainBinLabel         matlab.ui.control.Label
-        next_button          matlab.ui.control.Button
-        previous_button      matlab.ui.control.Button
+
+        fileMenu             matlab.ui.container.Menu
+        openItem             matlab.ui.container.Menu
+        saveItem             matlab.ui.container.Menu
+        exitItem             matlab.ui.container.Menu
+        settingsMenu         matlab.ui.container.Menu
+        preferencesItem      matlab.ui.container.Menu
+
+        erp_display          matlab.ui.control.UIAxes
+        fit_display          matlab.ui.control.UIAxes
+
+        % Init Plots
+        ga_plot             matlab.graphics.chart.primitive.Line
+        matched_xline       matlab.graphics.chart.decoration.ConstantLine
+        additional_bins     double
+        fit_xline           matlab.graphics.chart.decoration.ConstantLine
+
         a_slider             matlab.ui.control.Slider
         aSliderLabel         matlab.ui.control.Label
+        a_field              matlab.ui.control.NumericEditField
+        a_spinner            matlab.ui.control.Spinner
+
+        b_slider             matlab.ui.control.Slider
+        bSliderLabel         matlab.ui.control.Label
+        b_field              matlab.ui.control.NumericEditField
+        b_spinner            matlab.ui.control.Spinner
+
+        next_button          matlab.ui.control.Button
+        previous_button      matlab.ui.control.Button
         reject_button        matlab.ui.control.Button
         manual_button        matlab.ui.control.Button
         restore_button       matlab.ui.control.Button
-        b_slider             matlab.ui.control.Slider
-        bSliderLabel         matlab.ui.control.Label
-        fit_display          matlab.ui.control.UIAxes
-        erp_display          matlab.ui.control.UIAxes
-        save_check           matlab.ui.control.CheckBox
-        exit_button          matlab.ui.control.Button
-        ylimupper_field      matlab.ui.control.NumericEditField
-        ylimlower_field      matlab.ui.control.NumericEditField
-    end
-    
-    % Set properties that the review process needs
-    properties (Access = public)
-        % Setup
+
+        bin_selection_field  matlab.ui.control.EditField
+        erp_selection_field  matlab.ui.control.NumericEditField
+        bin_dropdown         matlab.ui.control.DropDown
+        MainBinLabel         matlab.ui.control.Label
+
+        % Overview Table
+        overview_table       matlab.ui.control.Table
+        overview_table_data  double   % or whatever format your data needs
+
+        % Setup Data Structuress
         erp_mat double % The data matrix with erps X channels X times X bins
         time_vector double % The vector showing times
         results_mat double % Results matrix with erps X bins X n_params
@@ -51,12 +67,6 @@ classdef review_app < matlab.apps.AppBase
         b_param double % current b param
         a_param_continuous double
         b_param_continuous double
-
-        % Init Plots
-        ga_plot matlab.graphics.chart.primitive.Line
-        matched_xline matlab.graphics.chart.decoration.ConstantLine
-        additional_bins double
-        fit_xline matlab.graphics.chart.decoration.ConstantLine
 
         % Init plot settings
         ylimupper double % Default params set at beginning
@@ -466,33 +476,35 @@ classdef review_app < matlab.apps.AppBase
             app.erp_selection_field.ValueChangedFcn = createCallbackFcn(app, @erp_selection_fieldValueChanged, true);
             app.erp_selection_field.Position = [350 21 80 22];
             app.erp_selection_field.Value = app.erp_num;
-
-            % Create exit_button
-            app.exit_button = uibutton(app.review, 'push');
-            app.exit_button.Position = [725 519 39 23];
-            app.exit_button.ButtonPushedFcn = createCallbackFcn(app, @exit_buttonButtonPushedFcn, true);
-            app.exit_button.Text = 'Exit';
-
-            % Create save_check
-            app.save_check = uicheckbox(app.review);
-            app.save_check.Text = 'Save';
-            app.save_check.Position = [672 519 50 22];
-            app.save_check.Value = 1;
-
-            % Create ylimupper
-            app.ylimupper_field = uieditfield(app.review, 'numeric');
-            app.ylimupper_field.ValueChangedFcn = createCallbackFcn(app, @ylimupper_fieldValueChanged, true);
-            app.ylimupper_field.Position = [26 239 25 19];
-            app.ylimupper_field.Value = app.ylimupper;
-
-            % Create ylimlower
-            app.ylimlower_field = uieditfield(app.review, 'numeric');
-            app.ylimlower_field.ValueChangedFcn = createCallbackFcn(app, @ylimlower_fieldValueChanged, true);
-            app.ylimlower_field.Position = [26 503 25 19];
-            app.ylimlower_field.Value = app.ylimlower;
-
+  
             % Show the figure after all components are created
             app.review.Visible = 'on';
+
+            % Create the "File" menu
+            app.fileMenu = uimenu(app.review);
+            app.fileMenu.Text = 'File';
+
+            % Add submenu items under "File"
+            app.openItem = uimenu(app.fileMenu);
+            app.openItem.Text = 'Open...';
+            app.openItem.MenuSelectedFcn = @(src, event) disp('Open selected');
+
+            app.saveItem = uimenu(app.fileMenu);
+            app.saveItem.Text = 'Save';
+            app.saveItem.MenuSelectedFcn = @(src, event) disp('Save selected');
+
+            app.exitItem = uimenu(app.fileMenu);
+            app.exitItem.Text = 'Exit';
+            app.exitItem.MenuSelectedFcn = @(src, event) close(app.review);
+
+            % Create the "Settings" menu
+            app.settingsMenu = uimenu(app.review);
+            app.settingsMenu.Text = 'Settings';
+
+            % Add a submenu item
+            app.preferencesItem = uimenu(app.settingsMenu);
+            app.preferencesItem.Text = 'Preferences';
+            app.preferencesItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
 
             % Initialize plotting
             restore_default_plot(app)
