@@ -44,7 +44,7 @@ function plot_latency(app)
     
     %axis([-200 800 -5 9]) % Achsen entsprechend des Signals anpassen 
     xlim(app.erp_display, [min(time_vec), max(time_vec)]);
-    ylim(app.erp_display, [app.ylimlower app.ylimupper]);
+    ylim(app.erp_display, [app.settings.ylimlower app.settings.ylimupper]);
     set(app.erp_display, 'YDir','reverse') % Hier wird einmal die Achse gedreht -> Negativierung oben 
     
     ax = app.erp_display;

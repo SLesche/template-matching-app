@@ -16,8 +16,9 @@ function specify_review_params(app)
     app.erp_mat = evalin('base', userInput{1});
     app.cfg = evalin('base', userInput{3});
     app.time_vector = evalin('base', userInput{2});
-    app.ylimlower = -5;
-    app.ylimupper = 9;
+    app.settings = struct();
+    app.settings.ylimlower = -5;
+    app.settings.ylimupper = 9;
     
     if ~isempty(userInput{4})
         app.results_mat = evalin('base', userInput{4});

@@ -9,8 +9,13 @@ classdef review_app < matlab.apps.AppBase
         openItem             matlab.ui.container.Menu
         saveItem             matlab.ui.container.Menu
         exitItem             matlab.ui.container.Menu
+
         settingsMenu         matlab.ui.container.Menu
         preferencesItem      matlab.ui.container.Menu
+
+        compareMenu          matlab.ui.container.Menu
+        compareApproachesItem      matlab.ui.container.Menu
+        compareERPsItem      matlab.ui.container.Menu
 
         erp_display          matlab.ui.control.UIAxes
         fit_display          matlab.ui.control.UIAxes
@@ -69,8 +74,7 @@ classdef review_app < matlab.apps.AppBase
         b_param_continuous double
 
         % Init plot settings
-        ylimupper double % Default params set at beginning
-        ylimlower double
+        settings struct % The structure for the settings of the plot
     end
 
     % Callbacks that handle component events
@@ -169,21 +173,6 @@ classdef review_app < matlab.apps.AppBase
             pause(0.01);
         end
 
-        % Value changed function: bin_dropdown
-        function bin_dropdownValueChanged(app, event)
-            % update app.bin
-            app.bin_num = str2num(app.bin_dropdown.Value);
-
-            [app.a_param, app.b_param, ~, ~, ~] = extract_optimized_params(app);
-            [app.a_param_continuous, app.b_param_continuous, ~, ~, ~] = extract_optimized_params(app);
-            app.bin_selection_field.Value = '';
-            update_param_displays(app)
-            plot_latency(app)
-            update_dropdown_items(app)
-
-            % generate fit plot
-            generate_fit_display(app)
-        end
 
         function add_red_frame(app)
             % Get the axis limits
@@ -256,57 +245,6 @@ classdef review_app < matlab.apps.AppBase
                     close(app.review);
                 end
             end
-        end
-
-        function ylimupper_fieldValueChanged(app, event)
-            app.ylimupper = app.ylimupper_field.Value;
-            plot_latency(app)
-        end
-
-        function ylimlower_fieldValueChanged(app, event)
-            app.ylimlower = app.ylimlower_field.Value;
-            plot_latency(app)
-        end
-
-        function bin_selection_fieldValueChanged(app, event)
-            app.additional_bins = eval(strcat("[", app.bin_selection_field.Value, "]"));
-            plot_latency(app)
-            plot_additional_bins(app)
-        end
-
-        function plot_additional_bins(app)
-            hold(app.erp_display, 'on')
-            
-            current_erp = app.erp_num;
-            electrodes = app.cfg.electrodes;
-
-            % plot all other bins with color
-            for additional_bin = app.additional_bins
-                plot( ...
-                    app.time_vector, ...
-                    squeeze(app.erp_mat(current_erp, electrodes, :, additional_bin)), '--', ...
-                    'Color', [0.7, 0.7, 1], ...
-                    'Parent', app.erp_display, ...
-                    'DisplayName', strcat('Bin ', num2str(additional_bin)))
-            end
-
-            % Add the legend
-
-            hold(app.erp_display, 'off')
-        end
-
-        function erp_selection_fieldValueChanged(app, event)
-            app.erp_num = app.erp_selection_field.Value;
-
-            [app.a_param, app.b_param] = extract_optimized_params(app);
-            [app.a_param_continuous, app.b_param_continuous] = extract_optimized_params(app);
-            app.bin_selection_field.Value = '';
-            update_param_displays(app)
-            plot_latency(app)
-            update_dropdown_items(app)
-
-            % generate fit plot
-            generate_fit_display(app)
         end
     end
 
@@ -414,19 +352,6 @@ classdef review_app < matlab.apps.AppBase
             app.next_button.Position = [628 18 101 31];
             app.next_button.Text = 'Next';
 
-            % Create MainBinLabel
-            app.MainBinLabel = uilabel(app.review);
-            app.MainBinLabel.HorizontalAlignment = 'right';
-            app.MainBinLabel.Position = [137 22 52 22];
-            app.MainBinLabel.Text = 'Main Bin';
-
-            % Create bin_dropdown
-            app.bin_dropdown = uidropdown(app.review);
-            %app.bin_dropdown.DropDownOpeningFcn = createCallbackFcn(app, @bin_dropdownDropDownOpening, true);
-            app.bin_dropdown.ValueChangedFcn = createCallbackFcn(app, @bin_dropdownValueChanged, true);
-            %app.bin_dropdown.ClickedFcn = createCallbackFcn(app, @bin_dropdownClicked, true);
-            app.bin_dropdown.Position = [204 19 38 28];
-
             % Create b_field
             app.b_field = uieditfield(app.review, 'numeric');
             app.b_field.ValueChangedFcn = createCallbackFcn(app, @b_fieldValueChanged, true);
@@ -448,17 +373,6 @@ classdef review_app < matlab.apps.AppBase
             app.a_spinner = uispinner(app.review, "Limits",[0 10], "Step", 0.01);
             app.a_spinner.ValueChangedFcn = createCallbackFcn(app, @a_spinnerValueChanged, true);
             app.a_spinner.Position = [728 218 24 22];
-
-            % Create bin_selection_field
-            app.bin_selection_field = uieditfield(app.review, 'text');
-            app.bin_selection_field.ValueChangedFcn = createCallbackFcn(app, @bin_selection_fieldValueChanged, true);
-            app.bin_selection_field.Position = [251 21 80 22];
-
-            % Create erp_selection_field
-            app.erp_selection_field = uieditfield(app.review, 'numeric');
-            app.erp_selection_field.ValueChangedFcn = createCallbackFcn(app, @erp_selection_fieldValueChanged, true);
-            app.erp_selection_field.Position = [350 21 80 22];
-            app.erp_selection_field.Value = app.erp_num;
   
             % Show the figure after all components are created
             app.review.Visible = 'on';
@@ -488,6 +402,19 @@ classdef review_app < matlab.apps.AppBase
             app.preferencesItem = uimenu(app.settingsMenu);
             app.preferencesItem.Text = 'Preferences';
             app.preferencesItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
+
+            % Create the "Compare" menu
+            app.compareMenu = uimenu(app.review);
+            app.compareMenu.Text = 'Compare';
+
+            % Add a submenu item
+            app.compareApproachesItem = uimenu(app.compareMenu);
+            app.compareApproachesItem.Text = 'Compare Approaches';
+            app.compareApproachesItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
+
+            app.compareERPsItem = uimenu(app.compareMenu);
+            app.compareERPsItem.Text = 'Compare ERPs';
+            app.compareERPsItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
 
             % Initialize plotting
             restore_default_plot(app)
