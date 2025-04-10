@@ -37,4 +37,3 @@ results_mat = run_template_matching(erp_data, time_vec, cfg);
 
 %% Start review app
 review_app
-
