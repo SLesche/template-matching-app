@@ -29,9 +29,9 @@ function set_component_positions(app)
     % Buttons are anchored at bottom, window is anchored at top
 
     %% Within Window
-    percent_height_plot = 75;
+    percent_height_plot = 81;
     percent_height_fit_display = 15;
-    percent_height_b_slider = 10;
+    percent_height_b_slider = 4;
     percent_height_a_slider = percent_height_plot;
 
     percent_width_erp = 90;
@@ -74,18 +74,18 @@ function set_component_positions(app)
 
 
     %% Buttons
-    icon_height = buttons_height * 0.8;
+    icon_height = buttons_height * 0.5;
     icon_width = icon_height * 1.6;
 
-    center_x = buttons_width / 2 + left_padding;
+    center_x = plot_width / 2 + left_padding;
 
     distance_from_edge = buttons_width*0.1;
-    short_margin = buttons_width*0.05;
-    long_margin = buttons_width*0.1;
+    short_margin = buttons_width*0.02;
+    long_margin = buttons_width*0.08;
 
-    bottom_corner_buttons_y = bottom_padding;
+    bottom_corner_buttons_y = bottom_padding + buttons_height/2 - icon_height/2;
 
-    bottom_corner_accept_x = center_x - icon_width;
+    bottom_corner_accept_x = center_x - icon_width/2;
     bottom_corner_reject_x = bottom_corner_accept_x + short_margin + icon_width;
     bottom_corner_restore_x = bottom_corner_accept_x - short_margin - icon_width;
 
