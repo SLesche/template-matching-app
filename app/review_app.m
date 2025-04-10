@@ -312,19 +312,22 @@ classdef review_app < matlab.apps.AppBase
             app.manual_button = uibutton(app.review, 'push');
             app.manual_button.ButtonPushedFcn = createCallbackFcn(app, @manual_buttonButtonPushed, true);
             app.manual_button.Position = [345 84 101 31];
-            app.manual_button.Text = 'Accept';
+            app.manual_button.Text = '';
+            app.manual_button.Icon = 'app/src/accept_icon.svg';
 
             % Create reject_button
             app.reject_button = uibutton(app.review, 'push');
             app.reject_button.ButtonPushedFcn = createCallbackFcn(app, @reject_buttonButtonPushed, true);
             app.reject_button.Position = [501 84 101 31];
-            app.reject_button.Text = 'Reject';
+            app.reject_button.Text = '';
+            app.reject_button.Icon = 'app/src/reject_icon.svg';
 
             % Create restore_button
             app.restore_button = uibutton(app.review, 'push');
             app.restore_button.ButtonPushedFcn = createCallbackFcn(app, @restore_buttonButtonPushed, true);
             app.restore_button.Position = [189 84 101 31];
-            app.restore_button.Text = 'Restore';
+            app.restore_button.Text = '';
+            app.restore_button.Icon = 'app/src/restore_icon.svg';
 
             % Create aSliderLabel
             app.aSliderLabel = uilabel(app.review);
@@ -344,13 +347,15 @@ classdef review_app < matlab.apps.AppBase
             app.previous_button = uibutton(app.review, 'push');
             app.previous_button.ButtonPushedFcn = createCallbackFcn(app, @previous_buttonButtonPushed, true);
             app.previous_button.Position = [26 18 101 31];
-            app.previous_button.Text = 'Previous';
+            app.previous_button.Text = '';
+            app.previous_button.Icon = 'app/src/previous_icon.svg';
 
             % Create next_button
             app.next_button = uibutton(app.review, 'push');
             app.next_button.ButtonPushedFcn = createCallbackFcn(app, @next_buttonButtonPushed, true);
             app.next_button.Position = [628 18 101 31];
-            app.next_button.Text = 'Next';
+            app.next_button.Text = '';  
+            app.next_button.Icon = 'app/src/next_icon.svg';
 
             % Create b_field
             app.b_field = uieditfield(app.review, 'numeric');
