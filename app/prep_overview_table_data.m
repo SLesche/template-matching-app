@@ -16,11 +16,11 @@ function [table_data] = prep_overview_table_data(final_mat)
 
     % Convert whole table to char
     table_data = cellfun(@num2str, num2cell(table_data), 'UniformOutput', false);
-
+    
     % Helper function for transforming decision codes
     function result = transform_decision_code(value, flag)
         if str2double(flag) == 1 && str2double(value) == 0
-            result = '⚠';  % Warning sign
+            result = 'review';  % Warning sign
         elseif str2double(value) == 0
             result = 'default';
         elseif str2double(value) == -1
@@ -40,15 +40,4 @@ function [table_data] = prep_overview_table_data(final_mat)
     % In review_flag, convert 0 to checkmark and 1 to warning sign
     table_data(:, end-1) = cellfun(@(x) strrep(x, '0', '✓'), table_data(:, end-1), 'UniformOutput', false);
     table_data(:, end-1) = cellfun(@(x) strrep(x, '1', '⚠'), table_data(:, end-1), 'UniformOutput', false);
-
-    % Transform numeric decision codes to strings
-    % Define the mapping
-    % codeMap = containers.Map({'0', '-1', '1', '2'}, {'default', 'reject', 'accept', 'manual'});
-
-    % % Apply the mapping using cellfun
-    % table_data(:, end) = cellfun(@(x) codeMap(x), table_data(:, end), 'UniformOutput', false);
-
-    
-
-
 end

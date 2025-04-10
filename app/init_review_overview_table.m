@@ -7,6 +7,7 @@ function init_review_overview_table(app)
     types = {'char', 'char', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'char', 'char'};
 
     data = prep_overview_table_data(app.final_mat);
+
     % Create the table
     app.overview_table = uitable(app.table_window);
     app.overview_table.Position = [10 10 555 280];
@@ -15,4 +16,6 @@ function init_review_overview_table(app)
     app.overview_table.ColumnFormat = types;  % customize column types
 
     app.overview_table.Data = data;  % initially populate
+
+    apply_styles_to_overview_table(app);  % apply styles to the table
 end
