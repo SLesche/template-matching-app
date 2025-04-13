@@ -5,10 +5,12 @@ function set_window_positions(app)
     centerX = screenSize(3)/2;
     centerY = screenSize(4)/2;
 
-    % Place the main window in the center of the screen
+    % Place the main window in the center of the screen, with offset of 10% of screen width
+
+    offsetX = screenSize(3) * 0.1; % 10% of screen width
     mainWindowWidth = 762;
     mainWindowHeight = 541;
-    mainWindowX = centerX - mainWindowWidth/2;
+    mainWindowX = centerX - mainWindowWidth/2 - offsetX;
     mainWindowY = centerY - mainWindowHeight/2;
     mainWindowPosition = [mainWindowX, mainWindowY, mainWindowWidth, mainWindowHeight];
 
@@ -16,7 +18,7 @@ function set_window_positions(app)
     app.review.Position = mainWindowPosition;
 
     % Position the overview table to the right of the main window
-    overviewTableWidth = 575;
+    overviewTableWidth = 625;
     overviewTableHeight = 300;
     
     overviewTableX = mainWindowX + mainWindowWidth + 10; % 10 pixels to the right of the main window
