@@ -10,7 +10,7 @@ function [table_data] = prep_overview_table_data(final_mat)
     % Bin indices (cycled for each ERP)
     bin_idx = round(repmat((1:n_bins)', n_erps, 1), 0);  % column vector
 
-    table_data = [erp_idx, bin_idx, flat_params];
+    table_data = [erp_idx, bin_idx, flat_params, zeros(size(erp_idx, 1), 1)];  % Initialize table data with zeros for inspect
     table_data(:, end-1) = round(table_data(:, end-1), 0);
     table_data(:, end) = round(table_data(:, end), 0);
 
@@ -40,4 +40,5 @@ function [table_data] = prep_overview_table_data(final_mat)
     % In review_flag, convert 0 to checkmark and 1 to warning sign
     table_data(:, end-1) = cellfun(@(x) strrep(x, '0', '✓'), table_data(:, end-1), 'UniformOutput', false);
     table_data(:, end-1) = cellfun(@(x) strrep(x, '1', '⚠'), table_data(:, end-1), 'UniformOutput', false);
+
 end

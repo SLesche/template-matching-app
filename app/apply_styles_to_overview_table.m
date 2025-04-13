@@ -13,9 +13,15 @@ function apply_styles_to_overview_table(app)
     if ~isempty(row_to_show)
         % Select the row in the overview table
         scroll(app.overview_table, "row", row_to_show);  % Scroll to the selected row
+
+        app.overview_table.Data(:, end) = {false};  % Set the inspect column to false for all rows
+        app.overview_table.Data(row_to_show, end) = {true};  % Set the inspect column to true for the selected row
     else
         scroll(app.overview_table, "row", 1);
         warning('Row not found for the given erp_num and bin_num');
+
+        app.overview_table.Data(:, end) = {false};  % Set the inspect column to false for all rows
+        app.overview_table.Data(1, end) = {true};  % Set the inspect column to true for the selected row
     end
 
     % Highlight active row
