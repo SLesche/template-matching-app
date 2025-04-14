@@ -20,6 +20,6 @@ function update_progress_bar_overview_table(app)
     app.progressDefaultFill.Position = [0, 0, defaultWidth, 20];
 
     % Update label
-    app.progressLabel.Text = sprintf('%d of %d reviewed or accepted by default (%.0f%%) - %d left to review', ...
-        totalReviewed, total, 100 * totalReviewed / total, count_review);
+    app.progressLabel.Text = sprintf('Of %d, %d accepted by default, %d reviewed - %d left to review', ...
+        total, count_default, count_accept_reject, count_review);
 end
