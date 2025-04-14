@@ -39,7 +39,7 @@ classdef review_app < matlab.apps.AppBase
         next_button          matlab.ui.control.Button
         previous_button      matlab.ui.control.Button
         jumpprevious_button  matlab.ui.control.Button
-        jumppnext_button     matlab.ui.control.Button
+        jumpnext_button      matlab.ui.control.Button
         reject_button        matlab.ui.control.Button
         manual_button        matlab.ui.control.Button
         restore_button       matlab.ui.control.Button
@@ -123,9 +123,8 @@ classdef review_app < matlab.apps.AppBase
             restore_default_plot(app, "reviewed")
         end
 
-
         % Button pushed function: previous_button
-        function previous_buttonButtonPushed(app, event)
+        function jumpprevious_buttonButtonPushed(app, event)
             % move ireview
             jump_to_previous_review(app)
 
@@ -133,9 +132,25 @@ classdef review_app < matlab.apps.AppBase
         end
 
         % Button pushed function: previous_button
-        function next_buttonButtonPushed(app, event)
+        function jumpnext_buttonButtonPushed(app, event)
             % move ireview
             jump_to_next_review(app)
+
+            load_new_plot(app)
+        end
+
+        % Button pushed function: previous_button
+        function previous_buttonButtonPushed(app, event)
+            % move ireview
+            go_to_previous_erp(app)
+
+            load_new_plot(app)
+        end
+
+        % Button pushed function: previous_button
+        function next_buttonButtonPushed(app, event)
+            % move ireview
+            go_to_next_erp(app)
 
             load_new_plot(app)
         end
@@ -357,6 +372,20 @@ classdef review_app < matlab.apps.AppBase
             app.next_button.Position = [628 18 101 31];
             app.next_button.Text = '';  
             app.next_button.Icon = 'app/src/next_icon.svg';
+
+            % Create jumpprevious_button
+            app.jumpprevious_button = uibutton(app.review, 'push');
+            app.jumpprevious_button.ButtonPushedFcn = createCallbackFcn(app, @jumpprevious_buttonButtonPushed, true);
+            %app.jumpprevious_button.Position = [26 18 101 31];
+            app.jumpprevious_button.Text = '';
+            app.jumpprevious_button.Icon = 'app/src/jump_previous_icon.svg';
+
+            % Create jumpnext_button
+            app.jumpnext_button = uibutton(app.review, 'push');
+            app.jumpnext_button.ButtonPushedFcn = createCallbackFcn(app, @jumpnext_buttonButtonPushed, true);
+            %app.jumpprevious_button.Position = [26 18 101 31];
+            app.jumpnext_button.Text = '';
+            app.jumpnext_button.Icon = 'app/src/jump_next_icon.svg';
 
             % Create b_field
             app.b_field = uieditfield(app.review, 'numeric');
