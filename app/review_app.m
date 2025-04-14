@@ -160,10 +160,10 @@ classdef review_app < matlab.apps.AppBase
         % Button pushed function: previous_button
         function search_buttonButtonPushed(app, event)
             % move ireview
-            [erp_num, bin_num] = search_for_erp(app);
+            [new_erp_num, new_bin_num] = search_for_erp(app);
 
-            app.erp_num = erp_num;
-            app.bin_num = bin_num;
+            app.erp_num = new_erp_num;
+            app.bin_num = new_bin_num;
 
             load_new_plot(app)
         end
@@ -390,6 +390,9 @@ classdef review_app < matlab.apps.AppBase
             app.next_button.Position = [628 18 101 31];
             app.next_button.Text = '';  
             app.next_button.Icon = 'app/src/next_icon.svg';
+
+            % Style settings
+            %app.next_button.BackgroundColor = ;  % Custom color (light grey)
 
             % Create jumpprevious_button
             app.jumpprevious_button = uibutton(app.review, 'push');
