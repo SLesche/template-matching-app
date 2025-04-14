@@ -55,6 +55,11 @@ classdef review_app < matlab.apps.AppBase
         table_window         matlab.ui.Figure
         overview_table       matlab.ui.control.Table
 
+        progressContainer    matlab.ui.container.Panel
+        progressDefaultFill  matlab.ui.container.Panel
+        progressReviewedFill matlab.ui.container.Panel
+        progressLabel        matlab.ui.control.Label
+
         % Setup Data Structuress
         erp_mat double % The data matrix with erps X channels X times X bins
         time_vector double % The vector showing times
