@@ -4,7 +4,7 @@ function update_progress_bar_overview_table(app)
     decisionColumn = data(:, end - 1);
 
     % Count types
-    count_accept_reject = sum(ismember(decisionColumn, {'accept', 'reject'}));
+    count_accept_reject = sum(ismember(decisionColumn, {'accept', 'reject', 'manual'}));
     count_default = sum(ismember(decisionColumn, {'default'}));
     count_review = sum(ismember(decisionColumn, {'review'}));
     
