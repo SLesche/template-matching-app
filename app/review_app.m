@@ -44,6 +44,7 @@ classdef review_app < matlab.apps.AppBase
         manual_button        matlab.ui.control.Button
         restore_button       matlab.ui.control.Button
         search_button        matlab.ui.control.Button
+        add_button           matlab.ui.control.Button
 
         bin_selection_field  matlab.ui.control.EditField
         erp_selection_field  matlab.ui.control.NumericEditField
@@ -159,12 +160,17 @@ classdef review_app < matlab.apps.AppBase
         % Button pushed function: previous_button
         function search_buttonButtonPushed(app, event)
             % move ireview
-            [erp_num, bin_num] = search_for_erp(app)
+            [erp_num, bin_num] = search_for_erp(app);
 
             app.erp_num = erp_num;
             app.bin_num = bin_num;
-            
+
             load_new_plot(app)
+        end
+
+        % Button pushed function: previous_button
+        function add_buttonButtonPushed(app, event)
+            plot_additional_bins(app)
         end
 
         % Value changed function: b_slider
@@ -405,6 +411,13 @@ classdef review_app < matlab.apps.AppBase
             %app.search_button.Position = [26 18 101 31];
             app.search_button.Text = '';
             app.search_button.Icon = 'app/src/search_icon.svg';
+
+            % Create add_button
+            app.add_button = uibutton(app.review, 'push');
+            app.add_button.ButtonPushedFcn = createCallbackFcn(app, @add_buttonButtonPushed, true);
+            %app.add_button.Position = [26 18 101 31];
+            app.add_button.Text = '';
+            app.add_button.Icon = 'app/src/add_icon.svg';
 
             % Create b_field
             app.b_field = uieditfield(app.review, 'numeric');

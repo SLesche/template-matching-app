@@ -106,6 +106,13 @@ function set_component_positions(app)
     jumpnext_position = [bottom_corner_jumpnext_x, bottom_corner_buttons_y, icon_width, icon_height];
     search_position = [bottom_corner_search_x, bottom_corner_buttons_y, icon_width, icon_height];
 
+    %% Add button in fit display
+    bottom_corner_add_button_x = bottom_corner_erp_x + short_margin;
+    bottom_corner_add_button_y = bottom_corner_erp_y + 0.05*plot_height;
+
+    add_button_position = [bottom_corner_add_button_x, bottom_corner_add_button_y, icon_width, icon_height];
+
+
     %% Set positions in app
     app.erp_display.Position = plot_position;
     app.fit_display.Position = fit_display_position;
@@ -121,4 +128,5 @@ function set_component_positions(app)
     app.jumpnext_button.Position = jumpnext_position;
 
     app.search_button.Position = search_position;
+    app.add_button.Position = add_button_position;
 end

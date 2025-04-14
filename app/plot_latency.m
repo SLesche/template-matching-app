@@ -55,19 +55,19 @@ function plot_latency(app)
     Ylm=ylim(app.erp_display);                          
     Xlm=xlim(app.erp_display);  
     Xlb=0.90*Xlm(2);
-    Ylb=0.90*Ylm(1);
+    Ylb=1;
     xlabel(app.erp_display, 'ms','Position',[Xlb 1]); 
     ylabel(app.erp_display, 'µV','Position',[-100 Ylb]); 
     
-    legend(app.erp_display, legend_text, 'location', 'southwest')
+    legend(app.erp_display, legend_text, 'location', 'southeast')
     title(app.erp_display, title_text)
 
 
-    text(app.erp_display, 0.95*Xlm(2), 0.95*Ylm(2), ...
+    text(app.erp_display, 0.95*Xlm(2), 0.95*Ylm(1), ...
         subtitle_text, ...
         'FontSize', 10, ...
         'HorizontalAlignment', 'right', ...
-        'VerticalAlignment', 'bottom');
+        'VerticalAlignment', 'top');
     
     hold(app.erp_display, 'off');
 end
