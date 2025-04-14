@@ -1,0 +1,43 @@
+function [erp_num, bin_num] = search_for_erp(app)
+    % Default values in case dialog is closed prematurely
+    erp_num = [];
+    bin_num = [];
+
+    % Create a dialog window
+    d = dialog('Position', [300 300 250 150], 'Name', 'Enter ERP and Bin');
+
+    % ERP number label and input
+    uicontrol('Parent', d, ...
+            'Style', 'text', ...
+            'Position', [20 100 80 20], ...
+            'String', 'ERP number:');
+    erpField = uicontrol('Parent', d, ...
+                        'Style', 'edit', ...
+                        'Position', [110 100 100 20]);
+
+    % Bin number label and input
+    uicontrol('Parent', d, ...
+            'Style', 'text', ...
+            'Position', [20 60 80 20], ...
+            'String', 'Bin number:');
+    binField = uicontrol('Parent', d, ...
+                        'Style', 'edit', ...
+                        'Position', [110 60 100 20]);
+
+    % OK button
+    uicontrol('Parent', d, ...
+            'Position', [85 20 70 25], ...
+            'String', 'OK', ...
+            'Callback', @(src, event) onConfirm());
+
+    % Wait for the dialog to close before returning
+    uiwait(d);
+
+    % Callback for OK button
+    function onConfirm()
+        erp_num = str2double(erpField.String);
+        bin_num = str2double(binField.String);
+        uiresume(d);  % Resume execution of the main function
+        delete(d);    % Close the dialog
+    end
+end

@@ -43,6 +43,7 @@ classdef review_app < matlab.apps.AppBase
         reject_button        matlab.ui.control.Button
         manual_button        matlab.ui.control.Button
         restore_button       matlab.ui.control.Button
+        search_button        matlab.ui.control.Button
 
         bin_selection_field  matlab.ui.control.EditField
         erp_selection_field  matlab.ui.control.NumericEditField
@@ -152,6 +153,17 @@ classdef review_app < matlab.apps.AppBase
             % move ireview
             go_to_next_erp(app)
 
+            load_new_plot(app)
+        end
+
+        % Button pushed function: previous_button
+        function search_buttonButtonPushed(app, event)
+            % move ireview
+            [erp_num, bin_num] = search_for_erp(app)
+
+            app.erp_num = erp_num;
+            app.bin_num = bin_num;
+            
             load_new_plot(app)
         end
 
@@ -383,9 +395,16 @@ classdef review_app < matlab.apps.AppBase
             % Create jumpnext_button
             app.jumpnext_button = uibutton(app.review, 'push');
             app.jumpnext_button.ButtonPushedFcn = createCallbackFcn(app, @jumpnext_buttonButtonPushed, true);
-            %app.jumpprevious_button.Position = [26 18 101 31];
+            %app.jumpnext_button.Position = [26 18 101 31];
             app.jumpnext_button.Text = '';
             app.jumpnext_button.Icon = 'app/src/jump_next_icon.svg';
+
+            % Create search_button
+            app.search_button = uibutton(app.review, 'push');
+            app.search_button.ButtonPushedFcn = createCallbackFcn(app, @search_buttonButtonPushed, true);
+            %app.search_button.Position = [26 18 101 31];
+            app.search_button.Text = '';
+            app.search_button.Icon = 'app/src/search_icon.svg';
 
             % Create b_field
             app.b_field = uieditfield(app.review, 'numeric');

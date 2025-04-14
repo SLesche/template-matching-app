@@ -8,7 +8,7 @@ function set_component_positions(app)
     bottom_padding = 10;
 
     left_padding = 30;
-    right_padding = 30;
+    right_padding = 20;
 
     avail_width = full_window_width - (left_padding + right_padding);
     avail_height = full_window_height - (top_padding + bottom_padding);
@@ -79,9 +79,9 @@ function set_component_positions(app)
 
     center_x = plot_width / 2 + left_padding;
 
-    distance_from_edge = buttons_width*0.1;
-    short_margin = buttons_width*0.02;
-    long_margin = buttons_width*0.08;
+    %distance_from_edge = buttons_width*0.1;
+    short_margin = buttons_width*0.015;
+    long_margin = buttons_width*0.06;
 
     bottom_corner_buttons_y = bottom_padding + buttons_height/2 - icon_height/2;
 
@@ -95,7 +95,7 @@ function set_component_positions(app)
     bottom_corner_next_x = bottom_corner_reject_x + long_margin + icon_width;
     bottom_corner_jumpnext_x = bottom_corner_next_x + short_margin + icon_width;
 
-    bottom_corner_search_x = window_width - icon_width - right_padding;
+    bottom_corner_search_x = avail_width - icon_width;
 
     jumpprevious_position = [bottom_corner_jumpprevious_x, bottom_corner_buttons_y, icon_width, icon_height];
     previous_position = [bottom_corner_previous_x, bottom_corner_buttons_y, icon_width, icon_height];
@@ -112,13 +112,13 @@ function set_component_positions(app)
     app.b_slider.Position = b_slider_position;
     app.a_slider.Position = a_slider_position;
 
-    % app.jumpprevious_button.Position = jumpprevious_position;
+    app.jumpprevious_button.Position = jumpprevious_position;
     app.previous_button.Position = previous_position;
     app.manual_button.Position = accept_position;
     app.reject_button.Position = reject_position;
     app.restore_button.Position = restore_position;
     app.next_button.Position = next_position;
-    % app.jumpnext_button.Position = jumpnext_position;
+    app.jumpnext_button.Position = jumpnext_position;
 
-    % app.search_button.Position = search_position;
+    app.search_button.Position = search_position;
 end
