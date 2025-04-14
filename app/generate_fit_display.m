@@ -59,5 +59,8 @@ function generate_fit_display(app)
     end
 
     plot(app.fit_display, b_params, fit_values)
+
+    title(app.fit_display, "Fit index")
+    
     app.fit_xline = xline(app.fit_display, app.b_param);
 end
