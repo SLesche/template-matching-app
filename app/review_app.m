@@ -27,14 +27,14 @@ classdef review_app < matlab.apps.AppBase
         fit_xline            matlab.graphics.chart.decoration.ConstantLine
 
         a_slider             matlab.ui.control.Slider
-        aSliderLabel         matlab.ui.control.Label
-        a_field              matlab.ui.control.NumericEditField
-        a_spinner            matlab.ui.control.Spinner
+        % aSliderLabel         matlab.ui.control.Label
+        % a_field              matlab.ui.control.NumericEditField
+        % a_spinner            matlab.ui.control.Spinner
 
         b_slider             matlab.ui.control.Slider
-        bSliderLabel         matlab.ui.control.Label
-        b_field              matlab.ui.control.NumericEditField
-        b_spinner            matlab.ui.control.Spinner
+        % bSliderLabel         matlab.ui.control.Label
+        % b_field              matlab.ui.control.NumericEditField
+        % b_spinner            matlab.ui.control.Spinner
 
         next_button          matlab.ui.control.Button
         previous_button      matlab.ui.control.Button
@@ -328,11 +328,11 @@ classdef review_app < matlab.apps.AppBase
             app.fit_display.YTickLabel = '';
             app.fit_display.Position = [78 182 593 38];
 
-            % Create bSliderLabel
-            app.bSliderLabel = uilabel(app.review);
-            app.bSliderLabel.HorizontalAlignment = 'right';
-            app.bSliderLabel.Position = [26 160 25 22];
-            app.bSliderLabel.Text = 'b';
+            % % Create bSliderLabel
+            % app.bSliderLabel = uilabel(app.review);
+            % app.bSliderLabel.HorizontalAlignment = 'right';
+            % app.bSliderLabel.Position = [26 160 25 22];
+            % app.bSliderLabel.Text = 'b';
 
             % Create b_slider
             app.b_slider = uislider(app.review);
@@ -363,11 +363,11 @@ classdef review_app < matlab.apps.AppBase
             app.restore_button.Text = '';
             app.restore_button.Icon = 'app/src/restore_icon.svg';
 
-            % Create aSliderLabel
-            app.aSliderLabel = uilabel(app.review);
-            app.aSliderLabel.HorizontalAlignment = 'right';
-            app.aSliderLabel.Position = [653 219 25 21];
-            app.aSliderLabel.Text = 'a';
+            % % Create aSliderLabel
+            % app.aSliderLabel = uilabel(app.review);
+            % app.aSliderLabel.HorizontalAlignment = 'right';
+            % app.aSliderLabel.Position = [653 219 25 21];
+            % app.aSliderLabel.Text = 'a';
 
             % Create a_slider
             app.a_slider = uislider(app.review);
@@ -422,27 +422,27 @@ classdef review_app < matlab.apps.AppBase
             app.add_button.Text = '';
             app.add_button.Icon = 'app/src/add_icon.svg';
 
-            % Create b_field
-            app.b_field = uieditfield(app.review, 'numeric');
-            app.b_field.ValueChangedFcn = createCallbackFcn(app, @b_fieldValueChanged, true);
-            app.b_field.Position = [9 138 42 22];
-            app.b_field.Value = round(app.b_param, 3);
+            % % Create b_field
+            % app.b_field = uieditfield(app.review, 'numeric');
+            % app.b_field.ValueChangedFcn = createCallbackFcn(app, @b_fieldValueChanged, true);
+            % app.b_field.Position = [9 138 42 22];
+            % app.b_field.Value = round(app.b_param, 3);
 
-            % Create a_field
-            app.a_field = uieditfield(app.review, 'numeric');
-            app.a_field.ValueChangedFcn = createCallbackFcn(app, @a_fieldValueChanged, true);
-            app.a_field.Position = [685 218 42 22];
-            app.a_field.Value = round(app.a_param, 3);
+            % % Create a_field
+            % app.a_field = uieditfield(app.review, 'numeric');
+            % app.a_field.ValueChangedFcn = createCallbackFcn(app, @a_fieldValueChanged, true);
+            % app.a_field.Position = [685 218 42 22];
+            % app.a_field.Value = round(app.a_param, 3);
 
-            % Create b_spinner
-            app.b_spinner = uispinner(app.review, "Limits",[0.25 3], "Step", 0.01);
-            app.b_spinner.ValueChangedFcn = createCallbackFcn(app, @b_spinnerValueChanged, true);
-            app.b_spinner.Position = [49 138 24 22];
+            % % Create b_spinner
+            % app.b_spinner = uispinner(app.review, "Limits",[0.25 3], "Step", 0.01);
+            % app.b_spinner.ValueChangedFcn = createCallbackFcn(app, @b_spinnerValueChanged, true);
+            % app.b_spinner.Position = [49 138 24 22];
 
-            % Create a_spinner
-            app.a_spinner = uispinner(app.review, "Limits",[0 10], "Step", 0.01);
-            app.a_spinner.ValueChangedFcn = createCallbackFcn(app, @a_spinnerValueChanged, true);
-            app.a_spinner.Position = [728 218 24 22];
+            % % Create a_spinner
+            % app.a_spinner = uispinner(app.review, "Limits",[0 10], "Step", 0.01);
+            % app.a_spinner.ValueChangedFcn = createCallbackFcn(app, @a_spinnerValueChanged, true);
+            % app.a_spinner.Position = [728 218 24 22];
   
             % Show the figure after all components are created
             app.review.Visible = 'on';

@@ -10,10 +10,10 @@ function update_param_displays(app)
     end
     app.b_slider.Value = b;
     app.a_slider.Value = a;
-    app.b_field.Value = round(b, 3);
-    app.a_field.Value = round(a, 3);
-    app.b_spinner.Value = b;
-    app.a_spinner.Value = a;
+    % app.b_field.Value = round(b, 3);
+    % app.a_field.Value = round(a, 3);
+    % app.b_spinner.Value = b;
+    % app.a_spinner.Value = a;
 
     update_fit_display(app);
 end
