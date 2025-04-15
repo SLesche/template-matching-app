@@ -5,23 +5,23 @@ function update_progress_bar_overview_table(app)
 
     % Count types
     count_accept_reject = sum(ismember(decisionColumn, {'accept', 'reject', 'manual'}));
-    count_default = sum(ismember(decisionColumn, {'default'}));
+    count_auto = sum(ismember(decisionColumn, {'auto'}));
     count_review = sum(ismember(decisionColumn, {'review'}));
     
-    totalReviewed = count_accept_reject + count_default;
+    totalReviewed = count_accept_reject + count_auto;
 
     % Width calculations
     containerWidth = app.progressContainer.Position(3);
     reviewedWidth = containerWidth * (count_accept_reject / total);
-    defaultWidth = containerWidth * (count_default / total);
+    defaultWidth = containerWidth * (count_auto / total);
 
     % Update bar widths
     app.progressReviewedFill.Position = [defaultWidth, 0, reviewedWidth, 20];
     app.progressDefaultFill.Position = [0, 0, defaultWidth, 20];
 
     % Update label
-    app.progressLabel.Text = sprintf('Of %d, %d accepted by default, %d reviewed - %d left to review', ...
-        total, count_default, count_accept_reject, count_review);
+    app.progressLabel.Text = sprintf('Of %d, %d accepted automatically, %d reviewed - %d left to review', ...
+        total, count_auto, count_accept_reject, count_review);
 
     % If filtered, display a warning sign before the text
     if app.settings.filter_decision ~= "All" || ~isempty(app.settings.filter_fit) || app.settings.filter_status ~= "All"

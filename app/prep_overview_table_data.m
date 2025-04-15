@@ -23,7 +23,7 @@ function [table_data] = prep_overview_table_data(app)
         if str2double(flag) == 1 && str2double(value) == 0
             result = 'review';  % Warning sign
         elseif str2double(value) == 0
-            result = 'default';
+            result = 'auto';
         elseif str2double(value) == -1
             result = 'reject';
         elseif str2double(value) == 1
@@ -48,10 +48,10 @@ function [table_data] = prep_overview_table_data(app)
     fit_include      = app.settings.filter_fit;
     status_include   = app.settings.filter_status;
 
-    disp("Filtering table data...")
-    disp("Decision filter: " + decision_include)
-    disp("Fit filter: " + fit_include)
-    disp("Status filter: " + status_include)
+    % disp("Filtering table data...")
+    % disp("Decision filter: " + decision_include)
+    % disp("Fit filter: " + fit_include)
+    % disp("Status filter: " + status_include)
 
     % --- Handle status include translation
     switch status_include
