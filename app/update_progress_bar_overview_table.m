@@ -22,4 +22,9 @@ function update_progress_bar_overview_table(app)
     % Update label
     app.progressLabel.Text = sprintf('Of %d, %d accepted by default, %d reviewed - %d left to review', ...
         total, count_default, count_accept_reject, count_review);
+
+    % If filtered, display a warning sign before the text
+    if app.settings.filter_decision ~= "All" || ~isempty(app.settings.filter_fit) || app.settings.filter_status ~= "All"
+        app.progressLabel.Text = ['⚠️ Filtered! | ' app.progressLabel.Text];
+    end
 end

@@ -7,7 +7,7 @@ function init_review_overview_table(app)
     types = {'char', 'char', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'char', 'char', 'logical'};
 
     % Prepare data
-    data = prep_overview_table_data(app.final_mat);
+    data = prep_overview_table_data(app);
 
     % === Create the Table ===
     app.overview_table = uitable(app.table_window, ...
