@@ -324,14 +324,14 @@ classdef review_app < matlab.apps.AppBase
             ylabel(app.erp_display, 'Y')
             zlabel(app.erp_display, 'Z')
             app.erp_display.ButtonDownFcn = createCallbackFcn(app, @erp_displayButtonDown, true);
-            app.erp_display.Position = [38 219 633 306];
+            %app.erp_display.Position = [38 219 633 306];
 
             % Create fit_display
             app.fit_display = uiaxes(app.review);
             app.fit_display.XLim = [0 3];
             app.fit_display.YLim = [0 1];
             app.fit_display.YTickLabel = '';
-            app.fit_display.Position = [78 182 593 38];
+            %app.fit_display.Position = [78 182 593 38];
 
             % % Create bSliderLabel
             % app.bSliderLabel = uilabel(app.review);
@@ -345,26 +345,26 @@ classdef review_app < matlab.apps.AppBase
             app.b_slider.MajorTicks = [0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 2.5 2.75 3];
             app.b_slider.ValueChangedFcn = createCallbackFcn(app, @b_sliderValueChanged, true);
             app.b_slider.ValueChangingFcn = createCallbackFcn(app, @b_sliderValueChanging, true);
-            app.b_slider.Position = [78 168 593 7];
+            %app.b_slider.Position = [78 168 593 7];
 
             % Create manual_button
             app.manual_button = uibutton(app.review, 'push');
             app.manual_button.ButtonPushedFcn = createCallbackFcn(app, @manual_buttonButtonPushed, true);
-            app.manual_button.Position = [345 84 101 31];
+            %app.manual_button.Position = [345 84 101 31];
             app.manual_button.Text = '';
             app.manual_button.Icon = 'app/src/accept_icon.svg';
 
             % Create reject_button
             app.reject_button = uibutton(app.review, 'push');
             app.reject_button.ButtonPushedFcn = createCallbackFcn(app, @reject_buttonButtonPushed, true);
-            app.reject_button.Position = [501 84 101 31];
+            %app.reject_button.Position = [501 84 101 31];
             app.reject_button.Text = '';
             app.reject_button.Icon = 'app/src/reject_icon.svg';
 
             % Create restore_button
             app.restore_button = uibutton(app.review, 'push');
             app.restore_button.ButtonPushedFcn = createCallbackFcn(app, @restore_buttonButtonPushed, true);
-            app.restore_button.Position = [189 84 101 31];
+            %app.restore_button.Position = [189 84 101 31];
             app.restore_button.Text = '';
             app.restore_button.Icon = 'app/src/restore_icon.svg';
 
@@ -380,19 +380,19 @@ classdef review_app < matlab.apps.AppBase
             app.a_slider.Orientation = 'vertical';
             app.a_slider.ValueChangedFcn = createCallbackFcn(app, @a_sliderValueChanged, true);
             app.a_slider.ValueChangingFcn = createCallbackFcn(app, @a_sliderValueChanging, true);
-            app.a_slider.Position = [686 257 7 247];
+            %app.a_slider.Position = [686 257 7 247];
 
             % Create previous_button
             app.previous_button = uibutton(app.review, 'push');
             app.previous_button.ButtonPushedFcn = createCallbackFcn(app, @previous_buttonButtonPushed, true);
-            app.previous_button.Position = [26 18 101 31];
+            %app.previous_button.Position = [26 18 101 31];
             app.previous_button.Text = '';
             app.previous_button.Icon = 'app/src/previous_icon.svg';
 
             % Create next_button
             app.next_button = uibutton(app.review, 'push');
             app.next_button.ButtonPushedFcn = createCallbackFcn(app, @next_buttonButtonPushed, true);
-            app.next_button.Position = [628 18 101 31];
+            %app.next_button.Position = [628 18 101 31];
             app.next_button.Text = '';  
             app.next_button.Icon = 'app/src/next_icon.svg';
 
