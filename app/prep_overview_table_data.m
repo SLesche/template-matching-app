@@ -15,6 +15,8 @@ function [table_data] = prep_overview_table_data(app)
     table_data(:, end-2) = round(table_data(:, end-2), 0);
     table_data(:, end-1) = round(table_data(:, end-1), 0);
 
+    numeric_corfit_col = table_data(:, 6);
+
     % Convert whole table to char
     table_data = cellfun(@num2str, num2cell(table_data), 'UniformOutput', false);
     
@@ -56,9 +58,9 @@ function [table_data] = prep_overview_table_data(app)
     % --- Handle status include translation
     switch status_include
         case 'flagged only'
-            status_value = 1;
+            status_value = '⚠';
         case 'unflagged only'
-            status_value = 0;
+            status_value = '✓';
         otherwise
             status_value = 'All';
     end
@@ -73,7 +75,7 @@ function [table_data] = prep_overview_table_data(app)
     % --- Fit filter (expression-based)
     if ~isempty(strtrim(fit_include))
         try
-            fit_values = str2double(cell2mat(table_data(:, 6)));  % numeric fit column
+            fit_values = numeric_corfit_col;  % numeric fit column
             fit_filter = eval(['fit_values ' fit_include]);  % e.g., '> 0.3'
             table_data = table_data(fit_filter, :);
         catch err
@@ -84,7 +86,7 @@ function [table_data] = prep_overview_table_data(app)
     % --- Status filter
     if ~strcmp(status_value, 'All')
         status_col = table_data(:, end-2);  % assuming this is the 'status' column
-        status_filter = status_col == status_value;
+        status_filter = ismember(status_col, status_value);
         table_data = table_data(status_filter, :);
     end
 
