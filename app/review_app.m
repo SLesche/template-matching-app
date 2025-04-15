@@ -20,8 +20,9 @@ classdef review_app < matlab.apps.AppBase
             displayInfoField      matlab.ui.control.CheckBox
             autoJumpField        matlab.ui.control.DropDown
             filterDecisionField  matlab.ui.control.DropDown
-            filterFitField   matlab.ui.control.DropDown
-
+            filterFitField      matlab.ui.control.EditField
+            filterStatusField   matlab.ui.control.DropDown
+        
         compareMenu          matlab.ui.container.Menu
         compareApproachesItem      matlab.ui.container.Menu
         compareERPsItem      matlab.ui.container.Menu
