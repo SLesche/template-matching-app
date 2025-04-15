@@ -7,7 +7,13 @@ function apply_styles_to_overview_table(app)
     % Assuming the table data structure is organized in a way where the first
     % two columns correspond to erp_num and bin_num respectively
     % (adjust indices if this assumption is incorrect)
-    row_to_show = (erp_num - 1)*n_bins + bin_num;  % Calculate the row index
+
+    % Find row to show based on erpnum and binnum in app.overview_table.Data
+    erp_col = str2double(app.overview_table.Data(:, 1));
+    bin_col = str2double(app.overview_table.Data(:, 2));
+    
+    row_to_show = find(erp_col == erp_num & bin_col == bin_num);
+    %row_to_show = (erp_num - 1)*n_bins + bin_num;  % Calculate the row index
     
     % Ensure a valid row index is found
     if ~isempty(row_to_show)
