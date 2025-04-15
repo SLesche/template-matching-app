@@ -26,11 +26,12 @@ function plot_latency(app)
     plot( ...
         time_vec, ...
         signal, 'black', ...
+        'LineWidth', app.settings.line_width, ...
         'Parent', app.erp_display)
         
     hold(app.erp_display, 'on');
     
-    app.ga_plot = plot(time_vec, matched_ga_y, "--", 'DisplayName', 'Grand Average Waveform', 'Parent', app.erp_display);
+    app.ga_plot = plot(time_vec, matched_ga_y, "--", 'DisplayName', 'Grand Average Waveform', 'LineWidth', app.settings.line_width, 'Parent', app.erp_display);
     app.matched_xline = xline(app.erp_display, latency, 'Color', plot_color);
 
     peak_auto_latency = approx_peak_latency(time_vec, signal, window, polarity);
@@ -39,8 +40,8 @@ function plot_latency(app)
     [legend_text, title_text, subtitle_text] = return_plot_legend(app, approach, b_param, latency, fit_cor);
 
 
-    xline(app.erp_display, peak_auto_latency, '--m', 'Label', 'Peak') % change dash-type and color
-    xline(app.erp_display, area_auto_latency, '-.m', 'Label','Area') % change dash-type and color
+    xline(app.erp_display, peak_auto_latency, '--m', 'Label', 'Peak', 'LineWidth', app.settings.line_width) % change dash-type and color
+    xline(app.erp_display, area_auto_latency, '-.m', 'Label','Area', 'LineWidth', app.settings.line_width) % change dash-type and color
     
     %axis([-200 800 -5 9]) % Achsen entsprechend des Signals anpassen 
     xlim(app.erp_display, [min(time_vec), max(time_vec)]);
@@ -59,15 +60,22 @@ function plot_latency(app)
     xlabel(app.erp_display, 'ms','Position',[Xlb 1]); 
     ylabel(app.erp_display, 'µV','Position',[-100 Ylb]); 
     
-    legend(app.erp_display, legend_text, 'location', 'southeast')
+    if app.settings.display_legend
+        legend(app.erp_display, legend_text, 'location', 'southeast')
+    else
+        legend(app.erp_display, 'off')
+    end
+
     title(app.erp_display, title_text)
 
 
-    text(app.erp_display, 0.95*Xlm(2), 0.95*Ylm(1), ...
-        subtitle_text, ...
-        'FontSize', 10, ...
-        'HorizontalAlignment', 'right', ...
-        'VerticalAlignment', 'top');
+    if app.settings.display_info
+        text(app.erp_display, 0.95*Xlm(2), 0.95*Ylm(1), ...
+            subtitle_text, ...
+            'FontSize', 10, ...
+            'HorizontalAlignment', 'right', ...
+            'VerticalAlignment', 'top');
+    end
     
     hold(app.erp_display, 'off');
 end

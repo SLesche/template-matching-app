@@ -12,6 +12,15 @@ classdef review_app < matlab.apps.AppBase
 
         settingsMenu         matlab.ui.container.Menu
         preferencesItem      matlab.ui.container.Menu
+        settings_window      matlab.ui.Figure
+            lineWidthField       matlab.ui.control.NumericEditField
+            ylimlowerField       matlab.ui.control.NumericEditField
+            ylimupperField       matlab.ui.control.NumericEditField
+            displayLegendField    matlab.ui.control.CheckBox
+            displayInfoField      matlab.ui.control.CheckBox
+            autoJumpField        matlab.ui.control.DropDown
+            filterDecisionField  matlab.ui.control.DropDown
+            filterFitField   matlab.ui.control.DropDown
 
         compareMenu          matlab.ui.container.Menu
         compareApproachesItem      matlab.ui.container.Menu
@@ -476,7 +485,7 @@ classdef review_app < matlab.apps.AppBase
             % Add a submenu item
             app.preferencesItem = uimenu(app.settingsMenu);
             app.preferencesItem.Text = 'Preferences';
-            app.preferencesItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
+            app.preferencesItem.MenuSelectedFcn = createCallbackFcn(app, @display_settings_window, true);
 
             % Create the "Compare" menu
             app.compareMenu = uimenu(app.review);
