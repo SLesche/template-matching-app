@@ -38,8 +38,8 @@ function display_settings_window(app, event)
 
     uilabel(buttonTab, 'Text', 'Auto Jump After:', 'Position', [20 220 120 22]);
     app.autoJumpField = uidropdown(buttonTab, ...
-        'Items', {'None', 'Accept', 'Reject', 'Any'}, ...
-        'Value', 'Any', ...
+        'Items', {'Jump to next review', 'Move to next ERP', 'Do not move'}, ...
+        'Value', app.settings.auto_jump_behavior, ...
         'Position', [150 220 100 22]);
 
     %% === Overview Table Filters Tab ===
@@ -78,12 +78,12 @@ function apply_settings(app)
     app.settings.line_width = app.lineWidthField.Value;
     app.settings.display_legend = app.displayLegendField.Value;
     app.settings.display_info = app.displayInfoField.Value;
-    app.settings.auto_jump = app.autoJumpField.Value;
+    app.settings.auto_jump_behavior = app.autoJumpField.Value;
     app.settings.filter_decision = app.filterDecisionField.Value;
     app.settings.filter_fit = app.filterFitField.Value;
 
     load_new_plot(app);
-    
+
     close(app.settings_window);
 end
 
