@@ -35,5 +35,8 @@ cfg.extreme_b = 1.5;
 %% Run matching
 results_mat = run_template_matching(erp_data, time_vec, cfg);
 
+%write(results_mat, 'data/results_mat')
+%test = reshape(readmatrix('data/results_mat'), 142, 2, 5)
+
 %% Start review app
 review_app
