@@ -272,35 +272,32 @@ classdef review_app < matlab.apps.AppBase
             
         end
 
-        function exit_buttonButtonPushedFcn(app, event)
-            % Promt, are you sure? save information
-            % then quit the app and write the new object to 
-            % the name specified in exit window
-            % Check the value of the save checkbox
-            save_value = app.save_check.Value;
+        function saveItemMenuSelectedFcn(app, event)
+            % Prompt user to enter object name in the same window
+            objectName = inputdlg('Enter object name:', 'Save Results', 1);
+            if isempty(objectName)
+                % User clicked cancel or closed the dialog
+                return;
+            end
+    
+            % Save results to a variable in the global workspace
+            globalObjectName = objectName{1};
+            assignin('base', globalObjectName, app.final_mat);
+            fprintf('Results saved to variable in global workspace: %s\n', globalObjectName);
 
-            if save_value == 1
-                % Prompt user to enter object name in the same window
-                objectName = inputdlg('Enter object name:', 'Save Results', 1);
-                if isempty(objectName)
-                    % User clicked cancel or closed the dialog
-                    return;
-                end
-        
-                % Save results to a variable in the global workspace
-                globalObjectName = objectName{1};
-                assignin('base', globalObjectName, app.final_mat);
-                fprintf('Results saved to variable in global workspace: %s\n', globalObjectName);
+            % Close the main figure to exit the app
+            close(app.table_window);
+            close(app.review);
 
+        end
+
+        function exitItemMenuSelectedFcn(app, event)
+            % Ask for confirmation to exit the app
+            choice = questdlg('Are you sure you want to exit?', 'Exit Confirmation', 'Yes', 'No', 'No');
+            if strcmp(choice, 'Yes')
                 % Close the main figure to exit the app
+                close(app.table_window);
                 close(app.review);
-            else
-                % Ask for confirmation to exit the app
-                choice = questdlg('Are you sure you want to exit?', 'Exit Confirmation', 'Yes', 'No', 'No');
-                if strcmp(choice, 'Yes')
-                    % Close the main figure to exit the app
-                    close(app.review);
-                end
             end
         end
     end
@@ -480,11 +477,11 @@ classdef review_app < matlab.apps.AppBase
 
             app.saveItem = uimenu(app.fileMenu);
             app.saveItem.Text = 'Save';
-            app.saveItem.MenuSelectedFcn = @(src, event) disp('Save selected');
+            app.saveItem.MenuSelectedFcn = createCallbackFcn(app, @saveItemMenuSelectedFcn, true);
 
             app.exitItem = uimenu(app.fileMenu);
             app.exitItem.Text = 'Exit';
-            app.exitItem.MenuSelectedFcn = @(src, event) close(app.review);
+            app.exitItem.MenuSelectedFcn =  createCallbackFcn(app, @exitItemMenuSelectedFcn, true);
 
             % Create the "Settings" menu
             app.settingsMenu = uimenu(app.review);
