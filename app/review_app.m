@@ -9,6 +9,7 @@ classdef review_app < matlab.apps.AppBase
         openItem             matlab.ui.container.Menu
         saveItem             matlab.ui.container.Menu
         exitItem             matlab.ui.container.Menu
+        importItem           matlab.ui.container.Menu
 
         settingsMenu         matlab.ui.container.Menu
         preferencesItem      matlab.ui.container.Menu
@@ -273,22 +274,20 @@ classdef review_app < matlab.apps.AppBase
         end
 
         function saveItemMenuSelectedFcn(app, event)
-            % Prompt user to enter object name in the same window
-            objectName = inputdlg('Enter object name:', 'Save Results', 1);
-            if isempty(objectName)
-                % User clicked cancel or closed the dialog
-                return;
-            end
-    
-            % Save results to a variable in the global workspace
-            globalObjectName = objectName{1};
-            assignin('base', globalObjectName, app.final_mat);
-            fprintf('Results saved to variable in global workspace: %s\n', globalObjectName);
+            export_final_mat(app)
 
             % Close the main figure to exit the app
             close(app.table_window);
             close(app.review);
 
+        end
+
+        function importItemMenuSelectedFcn(app, event)
+           imported_final_mat = import_final_mat(app);
+
+           app.final_mat = imported_final_mat;
+
+           load_new_plot(app)
         end
 
         function exitItemMenuSelectedFcn(app, event)
@@ -482,6 +481,10 @@ classdef review_app < matlab.apps.AppBase
             app.exitItem = uimenu(app.fileMenu);
             app.exitItem.Text = 'Exit';
             app.exitItem.MenuSelectedFcn =  createCallbackFcn(app, @exitItemMenuSelectedFcn, true);
+
+            app.importItem = uimenu(app.fileMenu);
+            app.importItem.Text = 'Import...';
+            app.importItem.MenuSelectedFcn = createCallbackFcn(app, @importItemMenuSelectedFcn, true);
 
             % Create the "Settings" menu
             app.settingsMenu = uimenu(app.review);
