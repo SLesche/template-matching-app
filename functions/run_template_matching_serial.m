@@ -1,4 +1,4 @@
-function [results_mat] = run_template_matching_serial(erp_mat, time_vec, cfg)                
+function [results_mat] = run_template_matching_serial(erp_mat, time_vec, cfg)                 
     polarity = cfg.polarity;
     electrodes = cfg.electrodes;
     window = cfg.window;
@@ -46,73 +46,60 @@ function [results_mat] = run_template_matching_serial(erp_mat, time_vec, cfg)
 
     results = zeros([n_erps, n_bins, n_params]);
 
+    total_iters = n_bins * n_erps;
+    current_iter = 0;
+
+    % Initialize uiwaitbar
+    h = waitbar(0, 'Starting template matching...'); 
+
     for ibin = 1:n_bins
         match_results = zeros(n_erps, n_params);
-        % Get the GA here, get corresponding approach and other pars
-        ga = squeeze(mean(erp_mat(:, electrodes, :, ibin), 1, 'omitnan'));                            
-        % Get the appropriate measurement window                    
+    
+        ga = squeeze(mean(erp_mat(:, electrodes, :, ibin), 1, 'omitnan'));
+    
         if is_template_matching
             lat_ga = approx_peak_latency(time_vec, ga, [window(1) window(2)], polarity);
-
-            % lat_ga = approx_area_latency(time_vec, ga, [window(1) window(2)], polarity, 0.5, true);
-
+    
             for ierp = 1:n_erps
+                current_iter = current_iter + 1;
+    
                 signal = squeeze(erp_mat(ierp, electrodes, :, ibin));
                 if all(isnan(signal)) || all(signal == 0)
                     match_results(ierp, :) = NaN;
                 else
                     try
-                        params = run_global_search(define_optim_problem(specify_objective_function(time_vec', signal, ga, [window(1) window(2)], polarity, weight_function, eval_function, normalize_function ,penalty_function, use_derivative, fix_a_param), fix_a_param));
+                        params = run_global_search(define_optim_problem(specify_objective_function( ...
+                            time_vec', signal, ga, [window(1) window(2)], polarity, ...
+                            weight_function, eval_function, normalize_function, ...
+                            penalty_function, use_derivative, fix_a_param), fix_a_param));
                     catch ME
-                            % If an error occurs, log the variables and rethrow the error
                         disp('--- An error occurred ---');
-                        disp('Error message:');
                         disp(ME.message);
                         disp([ibin, ierp])
-                
-                        % Log the input variables
-                        disp('--- Input Variables ---');
-                        disp('time_vec:');
-                        disp(time_vec);
-                        disp('signal:');
-                        disp(signal);
-                        disp('ga:');
-                        disp(ga);
-                        disp('window:');
-                        disp(window);
-                        disp('polarity:');
-                        disp(polarity);
-                        disp('weight_function:');
-                        disp(weight_function);
-                        disp('eval_function:');
-                        disp(eval_function);
-                        disp('normalize_function:');
-                        disp(normalize_function);
-                        disp('penalty_function:');
-                        disp(penalty_function);
-                        disp('use_derivative:');
-                        disp(use_derivative);
-                        disp('-----------------------');
-                
-                        % Rethrow the error to handle it further up the call stack if necessary
                         rethrow(ME);
                     end
-
+    
                     if fix_a_param == 1
                         params = [1 params];
                     end
-                    
+    
                     match_results(ierp, [1 2]) = params;
                     match_results(ierp, 3) = return_matched_latency(params(2), lat_ga);
-                    match_results(ierp, [4 5]) = get_fits(time_vec', signal, ga, [window(1) window(2)], polarity, weight_function, params(1), params(2));
-                    
+                    match_results(ierp, [4 5]) = get_fits(time_vec', signal, ga, ...
+                        [window(1) window(2)], polarity, weight_function, ...
+                        params(1), params(2));
                 end
+    
+                % Update the progress in the waitbar
+                percentDone = 100 * current_iter / total_iters;
+                waitbar(percentDone / 100, h, sprintf('Progress: %3.1f%% (%d/%d)', percentDone, current_iter, total_iters));
             end
         else
             for ierp = 1:n_erps
-                latency = NaN;
+                current_iter = current_iter + 1;
+    
                 signal = squeeze(erp_mat(ierp, electrodes, :, ibin));
-                
+    
                 if all(isnan(signal)) || all(signal == 0)
                     match_results(ierp, :) = NaN;
                 else
@@ -126,12 +113,21 @@ function [results_mat] = run_template_matching_serial(erp_mat, time_vec, cfg)
                     match_results(ierp, [1 2 4 5]) = NaN;
                     match_results(ierp, 3) = latency;
                 end
+
+                % Update the progress in the waitbar
+                percentDone = 100 * current_iter / total_iters;
+                waitbar(percentDone / 100, h, sprintf('Progress: %3.1f%% (%d/%d)', percentDone, current_iter, total_iters));
             end
         end
-
+    
         results(:, ibin, :) = match_results;
     end
-
+    
+    % Close the waitbar
+    close(h);
+    
+    fprintf('\nDone.\n');
+    
     results_mat = results;
 
 end
