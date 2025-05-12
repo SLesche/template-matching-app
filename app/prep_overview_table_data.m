@@ -65,11 +65,14 @@ function [table_data] = prep_overview_table_data(app)
             status_value = 'All';
     end
 
+    % Initialize the filtered vector to all true
+    filtered = true(size(table_data, 1), 1);
+
     % --- Decision filter
     if ~strcmp(decision_include, 'All')
         decision_col = table_data(:, end-1);  % assuming this is the 'decision' column
         decision_filter = ismember(decision_col, decision_include);
-        table_data = table_data(decision_filter, :);
+        filtered = filtered & decision_filter;
     end
 
     % --- Fit filter (expression-based)
@@ -77,7 +80,7 @@ function [table_data] = prep_overview_table_data(app)
         try
             fit_values = numeric_corfit_col;  % numeric fit column
             fit_filter = eval(['fit_values ' fit_include]);  % e.g., '> 0.3'
-            table_data = table_data(fit_filter, :);
+            filtered = filtered & fit_filter;
         catch err
             warning('Invalid fit expression "%s". Skipping fit filter.\n%s', fit_include, err.message);
         end
@@ -87,8 +90,12 @@ function [table_data] = prep_overview_table_data(app)
     if ~strcmp(status_value, 'All')
         status_col = table_data(:, end-2);  % assuming this is the 'status' column
         status_filter = ismember(status_col, status_value);
-        table_data = table_data(status_filter, :);
+        filtered = filtered & status_filter;
     end
+
+    % --- Apply all filters at once
+    table_data = table_data(filtered, :);
+
 
     % --- Final check
     if isempty(table_data)
