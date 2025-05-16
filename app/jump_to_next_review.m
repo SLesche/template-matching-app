@@ -2,22 +2,42 @@ function jump_to_next_review(app)
     current_erp = app.erp_num;
     current_bin = app.bin_num;
 
-    flag_layer = app.final_mat(:, :, 6);
-    [erp_max, bin_max] = size(flag_layer);
+    % Extract ERP, Bin, and Review columns
+    erp_col = str2double(app.overview_table.Data(:, 1));
+    bin_col = str2double(app.overview_table.Data(:, 2));
+    review_col = app.overview_table.Data(:, 9);
+    table_pairs = [erp_col, bin_col];
 
-    % Linear index in row-major order (like going across bins then down erps)
-    start_idx = (current_erp - 1) * bin_max + current_bin;
+    current_pair = [current_erp, current_bin];
 
-    % Flatten in row-major order
-    flag_vec = reshape(flag_layer.', [], 1);  % Transpose to simulate row-major
+    % Try to find exact match in the table
+    current_idx = find(ismember(table_pairs, current_pair, 'rows'), 1);
 
-    % Find all indices with flag == 1 after start
-    next_idx = find(flag_vec > 0 & (1:numel(flag_vec))' > start_idx, 1);
-
-    if isempty(next_idx)
-        warning("No more reviews left")
-    else
-        % Reverse the row-major index back to (erp, bin)
-        [app.bin_num, app.erp_num] = ind2sub([bin_max, erp_max], next_idx);
+    % ---------- CASE 1: Found current in table ----------
+    if ~isempty(current_idx)
+        for i = current_idx + 1 : size(app.overview_table.Data, 1)
+            if ischar(review_col{i}) && strcmpi(strtrim(review_col{i}), 'review')
+                app.erp_num = erp_col(i);
+                app.bin_num = bin_col(i);
+                return;
+            end
+        end
     end
+
+    % ---------- CASE 2: Not found or no match forward: search numerically ----------
+    for i = 1:size(app.overview_table.Data, 1)
+        if ischar(review_col{i}) && strcmpi(strtrim(review_col{i}), 'review')
+            e = erp_col(i);
+            b = bin_col(i);
+
+            % Jump only to numerically forward entries
+            if e > current_erp || (e == current_erp && b > current_bin)
+                app.erp_num = e;
+                app.bin_num = b;
+                return;
+            end
+        end
+    end
+
+    warning("No further 'review' entries found after current ERP/bin.");
 end

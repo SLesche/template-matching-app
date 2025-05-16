@@ -2,22 +2,45 @@ function jump_to_previous_review(app)
     current_erp = app.erp_num;
     current_bin = app.bin_num;
 
-    flag_layer = app.final_mat(:, :, 6);
-    [erp_max, bin_max] = size(flag_layer);
+    % Extract ERP, Bin, and Review columns
+    erp_col = str2double(app.overview_table.Data(:, 1));
+    bin_col = str2double(app.overview_table.Data(:, 2));
+    review_col = app.overview_table.Data(:, 9);
+    table_pairs = [erp_col, bin_col];
 
-    % Linear index in row-major order
-    start_idx = (current_erp - 1) * bin_max + current_bin;
+    current_pair = [current_erp, current_bin];
 
-    % Flatten in row-major order
-    flag_vec = reshape(flag_layer.', [], 1);  % Row-major
+    % Try to find exact match in the table
+    current_idx = find(ismember(table_pairs, current_pair, 'rows'), 1);
 
-    % Find all indices with flag == 1 before start
-    prev_idx = find(flag_vec > 0 & (1:numel(flag_vec))' < start_idx, 1, 'last');
+    % ---------- CASE 1: Found current in table ----------
+    if ~isempty(current_idx)
+        for i = current_idx - 1 : -1 : 1
+            if ischar(review_col{i}) && strcmpi(strtrim(review_col{i}), 'review')
+                app.erp_num = erp_col(i);
+                app.bin_num = bin_col(i);
 
-    if isempty(prev_idx)
-        warning("No previous reviews found.")
-    else
-        % Convert row-major index back to (erp, bin)
-        [app.bin_num, app.erp_num] = ind2sub([bin_max, erp_max], prev_idx);
+                % Optional: scroll and highlight
+                scroll(app.overview_table, "row", i);
+                return;
+            end
+        end
     end
+
+    % ---------- CASE 2: Not found or no match backward: search numerically ----------
+    for i = size(app.overview_table.Data, 1) : -1 : 1
+        if ischar(review_col{i}) && strcmpi(strtrim(review_col{i}), 'review')
+            e = erp_col(i);
+            b = bin_col(i);
+
+            % Jump only to numerically prior entries
+            if e < current_erp || (e == current_erp && b < current_bin)
+                app.erp_num = e;
+                app.bin_num = b;
+                return;
+            end
+        end
+    end
+
+    warning("No previous 'review' entries found before current ERP/bin.");
 end

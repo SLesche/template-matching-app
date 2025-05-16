@@ -231,48 +231,6 @@ classdef review_app < matlab.apps.AppBase
             pause(0.01);
         end
 
-
-        function add_red_frame(app)
-            % Get the axis limits
-            xlims = xlim(app.erp_display);
-            ylims = ylim(app.erp_display);
-            
-            % Define the rectangle around the plot
-            rect_position = [xlims(1), ylims(1), diff(xlims), diff(ylims)];
-            
-            % Add a red rectangle around the plot
-            rectangle(app.erp_display, 'Position', rect_position, 'EdgeColor', 'red', 'LineWidth', 2);
-        end
-
-
-        function a_spinnerValueChanged(app, event)
-            app.a_param = app.a_spinner.Value;
-            plot_latency(app)
-            update_param_displays(app)
-        end
-
-        function b_spinnerValueChanged(app, event)
-            app.b_param = app.b_spinner.Value;
-            plot_latency(app)
-            update_param_displays(app)
-        end
-
-        % Value changed function: a_field
-        function a_fieldValueChanged(app, event)
-            app.a_param = app.a_field.Value;
-            plot_latency(app)
-            update_param_displays(app)
-            
-        end
-
-        % Value changed function: a_field
-        function b_fieldValueChanged(app, event)
-            app.b_param = app.b_field.Value;
-            plot_latency(app)
-            update_param_displays(app)
-            
-        end
-
         function saveItemMenuSelectedFcn(app, event)
             export_final_mat(app)
 

@@ -1,32 +1,42 @@
 function go_to_previous_erp(app)
+    % Current ERP/bin
     current_erp = app.erp_num;
     current_bin = app.bin_num;
 
-    flag_layer = app.final_mat(:, :, 6);
-    [erp_max, bin_max] = size(flag_layer);
+    % Get overview table data (assumed ERP and Bin are in cols 1 and 2)
+    erp_col = str2double(app.overview_table.Data(:, 1));
+    bin_col = str2double(app.overview_table.Data(:, 2));
 
-    if current_erp == 1 && current_bin == 1
-        warning("Already at the first review")
-        return
-    end
+    % Combine ERP/Bin pairs
+    table_pairs = [erp_col, bin_col];
 
-    if current_bin == bin_max
-        if bin_max == 1
-            current_erp = current_erp - 1;
-        else
-            current_bin = current_bin - 1;
+    % Current pair
+    current_pair = [current_erp, current_bin];
+
+    % Sort all pairs in ERP-major order
+    [~, sorted_idx] = sortrows(table_pairs, [1 2]);
+    sorted_pairs = table_pairs(sorted_idx, :);
+
+    % Find current index
+    current_idx = find(ismember(sorted_pairs, current_pair, 'rows'), 1);
+
+    if isempty(current_idx)
+        % If current not found, find the last pair that's smaller
+        prev_idx = find(all(sorted_pairs < current_pair, 2), 1, 'last');
+        if isempty(prev_idx)
+            warning("Already at or before first entry in overview table");
+            return;
         end
-    elseif current_bin == 1
-        current_bin = bin_max;
-        current_erp = current_erp - 1;
     else
-        current_bin = current_bin - 1;
+        prev_idx = current_idx - 1;
+        if prev_idx < 1
+            warning("Already at the first entry in overview table");
+            return;
+        end
     end
 
-    if isempty(current_bin) || isempty(current_erp)
-        warning("No more reviews left")
-    else
-        app.bin_num = current_bin;
-        app.erp_num = current_erp;
-    end
+    % Get the previous ERP/bin from sorted list
+    prev_pair = sorted_pairs(prev_idx, :);
+    app.erp_num = prev_pair(1);
+    app.bin_num = prev_pair(2);
 end
