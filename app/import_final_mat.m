@@ -14,7 +14,7 @@ function final_mat = import_final_mat(app)
     % Read the CSV file into a table
     try
         T = readtable(fullpath);
-        disp(T)
+        % disp(T)
     catch ME
         error('Failed to read CSV: %s', ME.message);
     end

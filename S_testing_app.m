@@ -29,14 +29,15 @@ cfg.component_name = "p3_flanker";
 cfg.polarity = "positive";
 cfg.electrodes = 11;
 cfg.window = [250 700];
-cfg.cutoff = 0.3;
+cfg.cutoff = 0.6;
 cfg.extreme_b = 1.5;
 
 %% Run matching
-results_mat = run_template_matching(erp_data, time_vec, cfg);
+%results_mat = run_template_matching(erp_data, time_vec, cfg);
 
 %write(results_mat, 'data/results_mat')
-%test = reshape(readmatrix('data/results_mat'), 142, 2, 5)
+results_mat = reshape(readmatrix('data/results_mat'), 142, 2, 5);
 
 %% Start review app
 review_app
+    
