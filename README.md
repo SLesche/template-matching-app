@@ -2,6 +2,21 @@
 
 This repository provides tools to apply **template matching using the grand average ERP** to detect components in subject-level EEG data. The approach aligns individual ERPs to a group-level template using correlation or distance metrics, with optional weighting and penalty functions for flexible, component-specific tuning.
 
+The review app provides an interactive environment to inspect and refine component detection:
+
+* **Main review window**: Shows the ERP, template match, and fit information for a given latency estimate. You can **accept**, **adjust**, or **reject** matches manually.
+
+![Template Matching Review App](app/src/review_app_main_window.png)
+
+*Figure: Screenshot of the review interface showing the matched template and ERP with interactive options for review and adjustment.*
+
+
+* **Overview table**: Displays all subject ERPs along with match statistics and review status. Use the *View* button to inspect any individual ERP.
+
+![Overview Table Review App](app/src/review_app_overview_table.png)
+
+*Figure: Screenshot of the overview table showing match statistics and indicating review status.*
+
 📄 **Preprint**  
 For methodological details, please refer to our [preprint on Authorea](https://doi.org/10.22541/au.173383976.68997762/v1).
 
