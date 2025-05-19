@@ -101,12 +101,16 @@ And provide the data, configuration struct and results.
 The review app provides an interactive environment to inspect and refine component detection:
 
 * **Main review window**: Shows the ERP, template match, and fit information for a given latency estimate. You can **accept**, **adjust**, or **reject** matches manually.
+
 ![Template Matching Review App](app/src/review_app_main_window.png)
+
 *Figure: Screenshot of the review interface showing the matched template and ERP with interactive options for review and adjustment.*
 
 
 * **Overview table**: Displays all subject ERPs along with match statistics and review status. Use the *View* button to inspect any individual ERP.
+
 ![Overview Table Review App](app/src/review_app_overview_table.png)
+
 *Figure: Screenshot of the overview table showing match statistics and indicating review status.*
 
 Use the preferences menu (*Settings > Preferences > Overview Table*) to filter and customize the overview table display.
