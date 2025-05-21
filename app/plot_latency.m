@@ -40,8 +40,14 @@ function plot_latency(app)
     [legend_text, title_text, subtitle_text] = return_plot_legend(app, approach, b_param, latency, fit_cor);
 
 
-    xline(app.erp_display, peak_auto_latency, '--m', 'Label', 'Peak', 'LineWidth', app.settings.line_width) % change dash-type and color
-    xline(app.erp_display, area_auto_latency, '-.m', 'Label','Area', 'LineWidth', app.settings.line_width) % change dash-type and color
+    if ~isnan(peak_auto_latency)
+        xline(app.erp_display, peak_auto_latency, '--m', 'Label', 'Peak', 'LineWidth', app.settings.line_width); % changed dash-type and color
+    end
+    
+    if ~isnan(area_auto_latency)
+        xline(app.erp_display, area_auto_latency, '-.m', 'Label', 'Area', 'LineWidth', app.settings.line_width); % changed dash-type and color
+    end
+    
     
     %axis([-200 800 -5 9]) % Achsen entsprechend des Signals anpassen 
     xlim(app.erp_display, [min(time_vec), max(time_vec)]);
