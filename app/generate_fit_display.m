@@ -5,7 +5,7 @@ function generate_fit_display(app)
 
     % generate the color plot indicating the fit for various
     % b-params
-    b_params = linspace(0, 3, 1000);
+    b_params = linspace(0, 3, 100);
 
     fit_values = zeros(1, length(b_params));
 

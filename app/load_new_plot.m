@@ -9,9 +9,15 @@ function load_new_plot(app, erp_num, bin_num)
         app.bin_num = bin_num;
     end
 
+    % tic();
     restore_default_plot(app)
+    % toc();
 
+    % tic();
     generate_fit_display(app)
+    % toc();
 
+    % tic();
     update_overview_table(app)
+    % toc();
 end
