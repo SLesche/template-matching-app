@@ -428,9 +428,9 @@ classdef review_app < matlab.apps.AppBase
             app.fileMenu.Text = 'File';
 
             % Add submenu items under "File"
-            app.openItem = uimenu(app.fileMenu);
-            app.openItem.Text = 'Open...';
-            app.openItem.MenuSelectedFcn = @(src, event) disp('Open selected');
+            % app.openItem = uimenu(app.fileMenu);
+            % app.openItem.Text = 'Open...';
+            % app.openItem.MenuSelectedFcn = @(src, event) disp('Open selected');
 
             app.saveItem = uimenu(app.fileMenu);
             app.saveItem.Text = 'Save';
@@ -453,18 +453,18 @@ classdef review_app < matlab.apps.AppBase
             app.preferencesItem.Text = 'Preferences';
             app.preferencesItem.MenuSelectedFcn = createCallbackFcn(app, @display_settings_window, true);
 
-            % Create the "Compare" menu
-            app.compareMenu = uimenu(app.review);
-            app.compareMenu.Text = 'Compare';
+            % % Create the "Compare" menu
+            % app.compareMenu = uimenu(app.review);
+            % app.compareMenu.Text = 'Compare';
 
-            % Add a submenu item
-            app.compareApproachesItem = uimenu(app.compareMenu);
-            app.compareApproachesItem.Text = 'Compare Approaches';
-            app.compareApproachesItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
+            % % Add a submenu item
+            % app.compareApproachesItem = uimenu(app.compareMenu);
+            % app.compareApproachesItem.Text = 'Compare Approaches';
+            % app.compareApproachesItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
 
-            app.compareERPsItem = uimenu(app.compareMenu);
-            app.compareERPsItem.Text = 'Compare ERPs';
-            app.compareERPsItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
+            % app.compareERPsItem = uimenu(app.compareMenu);
+            % app.compareERPsItem.Text = 'Compare ERPs';
+            % app.compareERPsItem.MenuSelectedFcn = @(src, event) disp('Preferences selected');
 
             % Initialize plotting
             restore_default_plot(app)
