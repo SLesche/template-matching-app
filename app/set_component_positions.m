@@ -47,7 +47,7 @@ function set_component_positions(app)
     % b slider
     bottom_corner_b_slider_y = bottom_corner_window_y;
     bottom_corner_b_slider_x = bottom_corner_window_x;
-    b_slider_height = window_height*percent_height_b_slider / 100;
+    b_slider_height = app.b_slider.Position(4); % Because slider height is fixed
     b_slider_width = window_width*percent_width_b_slider / 100;
     b_slider_position = [bottom_corner_b_slider_x, bottom_corner_b_slider_y, b_slider_width, b_slider_height];
 
@@ -69,7 +69,7 @@ function set_component_positions(app)
     bottom_corner_a_slider_y = bottom_corner_erp_y;
     bottom_corner_a_slider_x = bottom_corner_window_x + window_width*percent_width_erp / 100;
     a_slider_height = window_height*percent_height_a_slider / 100;
-    a_slider_width = window_width*percent_width_a_slider / 100;
+    a_slider_width =  app.a_slider.Position(3); % Because slider height is fixed
     a_slider_position = [bottom_corner_a_slider_x, bottom_corner_a_slider_y, a_slider_width, a_slider_height];
 
 

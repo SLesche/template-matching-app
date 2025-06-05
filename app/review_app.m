@@ -257,6 +257,13 @@ classdef review_app < matlab.apps.AppBase
                 close(app.review);
             end
         end
+
+        function on_review_resize(app)
+            %disp("Resizing review window");
+            %set_window_positions(app);
+            set_component_positions(app);
+        end
+        
     end
 
     % Component initialization
@@ -288,6 +295,9 @@ classdef review_app < matlab.apps.AppBase
             % Create review and hide until all components are created
             app.review = uifigure('Visible', 'off');
             app.review.Name = 'Review Window';
+            app.review.AutoResizeChildren = 'off';
+            app.review.SizeChangedFcn = @(src, event) on_review_resize(app);
+
 
             % Create erp_display
             app.erp_display = uiaxes(app.review);
