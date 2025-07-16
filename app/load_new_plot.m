@@ -10,7 +10,7 @@ function load_new_plot(app, erp_num, bin_num)
     end
 
     % tic();
-    restore_default_plot(app)
+    restore_default_plot(app, "reviewed")
     % toc();
 
     % tic();

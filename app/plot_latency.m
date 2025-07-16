@@ -40,19 +40,26 @@ function plot_latency(app)
     [legend_text, title_text, subtitle_text] = return_plot_legend(app, approach, b_param, latency, fit_cor);
 
 
-    if ~isnan(peak_auto_latency)
-        xline(app.erp_display, peak_auto_latency, '--m', 'Label', 'Peak', 'LineWidth', app.settings.line_width); % changed dash-type and color
-    end
-    
-    if ~isnan(area_auto_latency)
-        xline(app.erp_display, area_auto_latency, '-.m', 'Label', 'Area', 'LineWidth', app.settings.line_width); % changed dash-type and color
+    if app.settings.display_traditional_lat
+        if ~isnan(peak_auto_latency)
+            xline(app.erp_display, peak_auto_latency, '--m', 'Label', 'Peak', 'LineWidth', app.settings.line_width); % changed dash-type and color
+        end
+        
+        if ~isnan(area_auto_latency)
+            xline(app.erp_display, area_auto_latency, '-.m', 'Label', 'Area', 'LineWidth', app.settings.line_width); % changed dash-type and color
+        end
     end
     
     
     %axis([-200 800 -5 9]) % Achsen entsprechend des Signals anpassen 
     xlim(app.erp_display, [min(time_vec), max(time_vec)]);
     ylim(app.erp_display, [app.settings.ylimlower app.settings.ylimupper]);
-    set(app.erp_display, 'YDir','reverse') % Hier wird einmal die Achse gedreht -> Negativierung oben 
+    
+    if app.settings.positive_up
+        set(app.erp_display, 'YDir','normal') % Hier wird einmal die Achse gedreht -> Positivierung oben 
+    else
+        set(app.erp_display, 'YDir','reverse') % Hier wird einmal die Achse gedreht -> Negativierung oben 
+    end
     
     ax = app.erp_display;
     ax.XAxisLocation = 'origin';
@@ -67,7 +74,7 @@ function plot_latency(app)
     ylabel(app.erp_display, 'µV','Position',[-100 Ylb]); 
     
     if app.settings.display_legend
-        legend(app.erp_display, legend_text, 'location', 'southeast')
+        legend(app.erp_display, legend_text, 'location', app.settings.legend_location)
     else
         legend(app.erp_display, 'off')
     end

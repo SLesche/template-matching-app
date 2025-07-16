@@ -14,9 +14,12 @@ classdef review_app < matlab.apps.AppBase
         settingsMenu         matlab.ui.container.Menu
         preferencesItem      matlab.ui.container.Menu
         settings_window      matlab.ui.Figure
+            positiveUpField      matlab.ui.control.CheckBox
             lineWidthField       matlab.ui.control.NumericEditField
             ylimlowerField       matlab.ui.control.NumericEditField
             ylimupperField       matlab.ui.control.NumericEditField
+            legendLocationField  matlab.ui.control.EditField
+            displayAutoLatField  matlab.ui.control.CheckBox
             displayLegendField    matlab.ui.control.CheckBox
             displayInfoField      matlab.ui.control.CheckBox
             autoJumpField        matlab.ui.control.DropDown
@@ -145,7 +148,7 @@ classdef review_app < matlab.apps.AppBase
 
         function restore_buttonButtonPushed(app, event)
             % If restore defaults
-            restore_default_plot(app, "reviewed")
+            restore_default_plot(app, "original")
         end
 
         % Button pushed function: previous_button
