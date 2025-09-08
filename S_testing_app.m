@@ -20,7 +20,7 @@ PATH_ERP = fullfile(filepath, "data\flanker_16");
 
 %% Add configuration
 cfg = struct();
-cfg.approach = "maxcor";
+cfg.approach = "minsq";
 cfg.weight = "get_normalized_weights";
 cfg.penalty = "exponential_penalty";
 cfg.normalization = "none";
@@ -37,7 +37,7 @@ cfg.extreme_b = 1.5;
 %results_mat = run_template_matching_serial(erp_data, time_vec, cfg); 
 % ^ if no parallel processing toolbox available
 
-%write(results_mat, 'data/results_mat')
+%writematrix(results_mat, 'data/results_mat.txt'); 
 results_mat = reshape(readmatrix('data/results_mat'), 142, 2, 5);
 
 %% Start review app
