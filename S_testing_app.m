@@ -1,16 +1,16 @@
 %% Set paths
 % These paths are necessary to run the functions and app
-addpath("functions\")
-addpath("app\")
+addpath(fullfile("functions"))
+addpath(fullfile("app"))
 
-% Setting paths for ERP paths, you may replace this with your own path
-% and read erp files as needed.
-[filepath, ~, ~] = fileparts(mfilename('fullpath'));
+% Get script location robustly
+filepath = fileparts(matlab.desktop.editor.getActiveFilename);
 cd(filepath);
 disp("Current folder changed to: " + filepath);
 
-% Path for files
-PATH_ERP = fullfile(filepath, "data\flanker_16");
+% Path for ERP files
+PATH_ERP = fullfile(filepath, "data", "flanker_16");
+
 
 %% Load ERPs
 % If you want to load ERPs manually, simply replace this
