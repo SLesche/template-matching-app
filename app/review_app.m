@@ -487,11 +487,11 @@ classdef review_app < matlab.apps.AppBase
             app.saveItem.Text = 'Save';
             
             app.saveCSV = uimenu(app.saveItem);
-            app.saveCSV.Text = 'Save as CSV';
+            app.saveCSV.Text = 'Save as .csv';
             app.saveCSV.MenuSelectedFcn = createCallbackFcn(app, @saveCSVSelectedFcn, true);
 
             app.saveMAT = uimenu(app.saveItem);
-            app.saveMAT.Text = 'Save as MAT';
+            app.saveMAT.Text = 'Save as .mat';
             app.saveMAT.MenuSelectedFcn = createCallbackFcn(app, @saveMATSelectedFcn, true);
 
             app.saveWorkspace = uimenu(app.saveItem);
@@ -502,11 +502,11 @@ classdef review_app < matlab.apps.AppBase
             app.importItem.Text = 'Import';
 
             app.importCSV = uimenu(app.importItem);
-            app.importCSV.Text = 'Import from CSV';
+            app.importCSV.Text = 'Import from .csv';
             app.importCSV.MenuSelectedFcn = createCallbackFcn(app, @importCSVSelectedFcn, true);
 
             app.importMAT = uimenu(app.importItem);
-            app.importMAT.Text = 'Import from MAT';
+            app.importMAT.Text = 'Import from .mat';
             app.importMAT.MenuSelectedFcn = createCallbackFcn(app, @importMATSelectedFcn, true);
 
             app.importWorkspace = uimenu(app.importItem);
