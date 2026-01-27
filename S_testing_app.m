@@ -56,4 +56,21 @@ results_mat = reshape(readmatrix('data/results_mat'), 142, 2, 5);
 
 %% Start review app
 review_app
+
+% after saving, final_mat has the following dimensions (expanded to 2D in csv)
+% 
+% Dimensions: Subjects X Bins X Parameters
+%
+% Parameters are in that order:
+%   a - a parameter after optimization or manual adjust
+%   b - b parameter 
+%   latency - component latency
+%   fit_dist - distance based similarity measure (MINSQ)
+%   fit_cor - correlation based similarity measure (MAXCOR)
+%   review_flag - to be reviewed "1" or not "0"
+%   decision - decision:
+%           "-1" = reject
+%           "0"  = automatic
+%           "1"  = accept
+%           "2"  = manual adjustment
     
