@@ -45,14 +45,14 @@ cfg.cutoff = 0.6; % Cutoff for review app
 cfg.extreme_b = 1.5; % Multiplier for extreme value detection in review app
 
 %% Run matching
-results_mat = run_template_matching(erp_data, time_vec, cfg);
+%results_mat = run_template_matching(erp_data, time_vec, cfg);
 %results_mat = run_template_matching_serial(erp_data, time_vec, cfg); 
 % ^ if no parallel processing toolbox available
 
-writematrix(results_mat, 'data/results_mat.txt'); 
+%writematrix(results_mat, 'data/results_mat.txt'); 
 
 %% Or load previous results
-%results_mat = reshape(readmatrix('data/results_mat'), 142, 2, 5);
+results_mat = reshape(readmatrix('data/results_mat'), 142, 2, 5);
 
 %% Start review app
 review_app

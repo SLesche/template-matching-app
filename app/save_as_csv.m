@@ -1,4 +1,4 @@
-function [] = export_final_mat(app)
+function [] = save_as_csv(app)
     % This function exports `app.final_mat` as a flattened 2D CSV file.
     % Output columns: ERP, Bin, A, B, Latency, Fit1, Fit2, Inspect (0)
     % Prompt user for file location
