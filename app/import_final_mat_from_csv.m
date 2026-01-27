@@ -1,4 +1,4 @@
-function final_mat = import_final_mat(app)
+function final_mat = import_final_mat_from_csv(app)
     % This function opens a file dialog to select and import a final_mat-style CSV,
     % then reshapes it into a 3D matrix [n_erps × n_bins × n_params].
 

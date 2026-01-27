@@ -13,6 +13,9 @@ classdef review_app < matlab.apps.AppBase
         saveWorkspace        matlab.ui.container.Menu
         exitItem             matlab.ui.container.Menu
         importItem           matlab.ui.container.Menu
+        importCSV            matlab.ui.container.Menu
+        importMAT            matlab.ui.container.Menu
+        importWorkspace      matlab.ui.container.Menu
 
         settingsMenu         matlab.ui.container.Menu
         preferencesItem      matlab.ui.container.Menu
@@ -262,8 +265,24 @@ classdef review_app < matlab.apps.AppBase
 
         end
 
-        function importItemMenuSelectedFcn(app, event)
-           imported_final_mat = import_final_mat(app);
+        function importCSVSelectedFcn(app, event)
+           imported_final_mat = import_final_mat_from_csv(app);
+
+           app.final_mat = imported_final_mat;
+
+           load_new_plot(app)
+        end
+
+        function importMATSelectedFcn(app, event)
+           imported_final_mat = import_final_mat_from_mat(app);
+
+           app.final_mat = imported_final_mat;
+
+           load_new_plot(app)
+        end
+
+        function importWorkspaceSelectedFcn(app, event)
+           imported_final_mat = import_final_mat_from_workspace(app);
 
            app.final_mat = imported_final_mat;
 
@@ -480,8 +499,19 @@ classdef review_app < matlab.apps.AppBase
             app.saveWorkspace.MenuSelectedFcn = createCallbackFcn(app, @saveWorkspaceSelectedFcn, true);
 
             app.importItem = uimenu(app.fileMenu);
-            app.importItem.Text = 'Import...';
-            app.importItem.MenuSelectedFcn = createCallbackFcn(app, @importItemMenuSelectedFcn, true);
+            app.importItem.Text = 'Import';
+
+            app.importCSV = uimenu(app.importItem);
+            app.importCSV.Text = 'Import from CSV';
+            app.importCSV.MenuSelectedFcn = createCallbackFcn(app, @importCSVSelectedFcn, true);
+
+            app.importMAT = uimenu(app.importItem);
+            app.importMAT.Text = 'Import from MAT';
+            app.importMAT.MenuSelectedFcn = createCallbackFcn(app, @importMATSelectedFcn, true);
+
+            app.importWorkspace = uimenu(app.importItem);
+            app.importWorkspace.Text = 'Import from Workspace';
+            app.importWorkspace.MenuSelectedFcn = createCallbackFcn(app, @importWorkspaceSelectedFcn, true);
 
             app.exitItem = uimenu(app.fileMenu);
             app.exitItem.Text = 'Exit';
