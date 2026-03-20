@@ -17,8 +17,8 @@ The review app provides an interactive environment to inspect and refine compone
 
 *Figure: Screenshot of the overview table showing match statistics and indicating review status.*
 
-📄 **Preprint**  
-For methodological details, please refer to our [preprint on Authorea](https://doi.org/10.22541/au.173383976.68997762/v1).
+📄 **Paper in Psychophysiology**  
+For methodological details, please refer to our [paper published in Psychophysiology](https://doi.org/10.1111/psyp.70212).
 
 ---
 
