@@ -311,6 +311,36 @@ classdef review_app < matlab.apps.AppBase
             %set_window_positions(app);
             set_component_positions(app);
         end
+
+        function erp_displayButtonDown(app, src, event)
+            % Get click location in axes coordinates
+            cp = app.erp_display.CurrentPoint;
+            x = cp(1,1);
+            y = cp(1,2);
+        
+            % Get axis limits
+            xl = xlim(app.erp_display);
+            yl = ylim(app.erp_display);
+        
+            % Check if click is inside the visible axes region
+            insideAxes = x >= xl(1) && x <= xl(2) && ...
+                         y >= yl(1) && y <= yl(2);
+        
+            if insideAxes
+                %disp(['Clicked ERP axes at: ', num2str(x), ', ', num2str(y)]);
+
+                % Convert click to proper b param
+                ga_latency = app.ga_latencies(app.bin_num);
+
+                new_b = x / ga_latency;
+
+                app.b_param = new_b;
+                app.b_param_continuous = new_b;
+                
+                plot_latency(app)
+                update_param_displays(app);    
+            end
+        end
         
     end
 
@@ -328,6 +358,10 @@ classdef review_app < matlab.apps.AppBase
             init_final_results(app);
 
             get_grand_averages(app);
+
+            if isempty(app.ga_latencies) || any(isnan(app.ga_latencies))
+                compute_ga_latencies(app);
+            end
 
             % Initialize the matrix of reviews
             flag_for_review(app);
@@ -347,12 +381,15 @@ classdef review_app < matlab.apps.AppBase
             app.review.SizeChangedFcn = @(src, event) on_review_resize(app);
 
 
+            % Allow clicks in the entire app
+            app.review.WindowButtonDownFcn = @(src, event) erp_displayButtonDown(app, src, event);
+
             % Create erp_display
             app.erp_display = uiaxes(app.review);
             xlabel(app.erp_display, 'X')
             ylabel(app.erp_display, 'Y')
             zlabel(app.erp_display, 'Z')
-            app.erp_display.ButtonDownFcn = createCallbackFcn(app, @erp_displayButtonDown, true);
+            %app.erp_display.ButtonDownFcn = createCallbackFcn(app, @erp_displayButtonDown, true);
             %app.erp_display.Position = [38 219 633 306];
 
             % Create fit_display
