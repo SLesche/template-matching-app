@@ -2,60 +2,99 @@ function display_ga_window(app, event)
 
     % Create window
     app.ga_window = uifigure('Name', 'Grand Average', ...
-        'Position', [300, 300, 520, 460]);
+        'Position', [300, 300, 560, 520]);
 
-    % Initialize latency storage (per bin)
+    % =========================
+    % DATA
+    % =========================
     nBins = size(app.ga_mat, 1);
     app.ga_latencies = nan(nBins, 1);
 
-    % === AXES ===
+    % =========================
+    % AXES
+    % =========================
     app.ga_axes = uiaxes(app.ga_window, ...
-        'Position', [60 120 400 300]);
+        'Position', [60 170 440 300]);
 
-    % === DROPDOWN ===
+    % =========================
+    % BIN SELECTOR + INFO ROW
+    % =========================
+    uilabel(app.ga_window, ...
+        'Position', [60 135 80 20], ...
+        'Text', 'Bin:');
+
     app.ga_bin_dropdown = uidropdown(app.ga_window, ...
-        'Position', [60 70 120 30], ...
+        'Position', [100 135 100 22], ...
         'Items', string(1:nBins), ...
         'Value', "1", ...
         'ValueChangedFcn', @(src,event) update_ga_plot(app));
 
-    % === BUTTONS ===
+    % Bin overview label
+    app.ga_bin_info = uilabel(app.ga_window, ...
+        'Position', [220 135 300 20], ...
+        'Text', ['Bins requiring latencies: ' num2str(nBins)]);
+
+    % =========================
+    % BUTTON ROW (clean grouping)
+    % =========================
+    btnY = 95;
+
     app.ga_btn_peak = uibutton(app.ga_window, ...
         'push', ...
         'Text', 'Peak', ...
-        'Position', [200 70 80 30], ...
+        'Position', [60 btnY 80 28], ...
         'ButtonPushedFcn', @(src,event) set_peak_latency(app));
 
     app.ga_btn_area = uibutton(app.ga_window, ...
         'push', ...
         'Text', 'Area', ...
-        'Position', [290 70 80 30], ...
+        'Position', [150 btnY 80 28], ...
         'ButtonPushedFcn', @(src,event) set_area_latency(app));
 
     app.ga_btn_clear = uibutton(app.ga_window, ...
         'push', ...
         'Text', 'Clear', ...
-        'Position', [380 70 80 30], ...
+        'Position', [240 btnY 80 28], ...
         'ButtonPushedFcn', @(src,event) clear_latency(app));
-
-    % === LATENCY LABEL ===
-    app.ga_latency_label = uilabel(app.ga_window, ...
-        'Position', [60 30 400 30], ...
-        'Text', 'Latency: -');
 
     app.ga_btn_apply = uibutton(app.ga_window, ...
         'push', ...
         'Text', 'Apply & Close', ...
-        'Position', [200 30 120 30], ...
+        'Position', [330 btnY 130 28], ...
         'ButtonPushedFcn', @(src,event) apply_ga_latency(app));
 
-    % === GLOBAL CLICK HANDLER ===
+    % =========================
+    % INSTRUCTION BOX
+    % =========================
+    app.ga_info_box = uitextarea(app.ga_window, ...
+        'Position', [60 10 440 70], ...
+        'Editable', 'off', ...
+        'Value', {
+            'Instructions:'
+            '1. Select a bin from the dropdown'
+            '2. Click on the plot OR use Peak/Area buttons'
+            '3. Adjust latencies per bin'
+            '4. Press "Apply & Close" to save changes'
+        });
+
+    % =========================
+    % LABEL (live latency)
+    % =========================
+    app.ga_latency_label = uilabel(app.ga_window, ...
+        'Position', [60 110 300 20], ...
+        'Text', 'Latency: -');
+
+    % =========================
+    % GLOBAL CLICK HANDLER
+    % =========================
     app.ga_window.WindowButtonDownFcn = ...
         @(src, event) ga_click_callback(app);
 
     % Initial plot
     update_ga_plot(app);
 end
+
+
 function update_ga_plot(app)
 
     bin = str2double(app.ga_bin_dropdown.Value);
@@ -85,6 +124,18 @@ function update_ga_plot(app)
     xlabel(app.ga_axes, 'ms');
     ylabel(app.ga_axes, 'µV');
     title(app.ga_axes, ['Grand Average - Bin ', num2str(bin)]);
+
+    ax = app.ga_axes;
+    ax.XAxisLocation = 'origin';
+    ax.YAxisLocation = 'origin';
+    set(app.ga_axes,'TickDir','in'); 
+    ax.XRuler.TickLabelGapOffset = -20;    
+    Ylm=ylim(app.ga_axes);                          
+    Xlm=xlim(app.ga_axes);  
+    Xlb=0.90*Xlm(2);
+    Ylb=1;
+    xlabel(app.ga_axes, 'ms','Position',[Xlb 1]); 
+    ylabel(app.ga_axes, 'µV','Position',[-100 Ylb]); 
 end
 
 function ga_click_callback(app)
