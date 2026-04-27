@@ -12,6 +12,6 @@ function compute_ga_latencies(app)
         end
     end 
 
-    disp('Computed GA latencies:');
-    disp(app.ga_latencies);
+    % disp('Computed GA latencies:');
+    % disp(app.ga_latencies);
 end

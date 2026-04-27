@@ -233,8 +233,8 @@ function clear_latency(app)
 end
 
 function apply_ga_latency(app)    
-    disp('GA latencies applied:');
-    disp(app.ga_latencies);
+    % disp('GA latencies applied:');
+    % disp(app.ga_latencies);
 
 
     % === CLOSE WINDOW ===

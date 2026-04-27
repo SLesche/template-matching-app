@@ -614,7 +614,6 @@ classdef review_app < matlab.apps.AppBase
 
             % If ga_latencies are not computed yet, have them specified
             if isempty(app.ga_latencies) || any(isnan(app.ga_latencies))
-                compute_ga_latencies(app);
                 display_ga_window(app);
             end
         end
