@@ -40,5 +40,7 @@ function specify_review_params(app)
         if length(app.ga_latencies) ~= n_bins
             error('This vector should contain one latency per bin');
         end
+    else
+        app.ga_latencies = nan(size(app.erp_mat, 4), 1);
     end
 end
