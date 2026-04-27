@@ -118,8 +118,15 @@ classdef review_app < matlab.apps.AppBase
             review_method = -1; % rejected, so -1
             write_info(app, review_method, app.erp_num, app.bin_num, a, b, latency, fit_cor, fit_dist)
 
-            jump_to_next_review(app)
-
+            % move to next review
+            if app.settings.auto_jump_behavior == "Jump to next review"
+                % move ireview
+                jump_to_next_review(app)
+            elseif app.settings.auto_jump_behavior == "Move to next ERP"
+                % move ireview
+                go_to_next_erp(app)
+            end
+            
             load_new_plot(app)
         end
 
