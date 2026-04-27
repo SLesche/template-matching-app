@@ -19,6 +19,18 @@ classdef review_app < matlab.apps.AppBase
 
         settingsMenu         matlab.ui.container.Menu
         preferencesItem      matlab.ui.container.Menu
+        grandAverageItem     matlab.ui.container.Menu
+        % === GA WINDOW ===
+        ga_window          matlab.ui.Figure
+        ga_axes            matlab.ui.control.UIAxes
+        ga_bin_dropdown    matlab.ui.control.DropDown
+        ga_btn_peak           matlab.ui.control.Button
+        ga_btn_area           matlab.ui.control.Button
+        ga_btn_clear          matlab.ui.control.Button
+        ga_latency_label      matlab.ui.control.Label
+        ga_btn_apply matlab.ui.control.Button
+
+        % === SETTINGS WINDOW ===
         settings_window      matlab.ui.Figure
             positiveUpField      matlab.ui.control.CheckBox
             lineWidthField       matlab.ui.control.NumericEditField
@@ -336,7 +348,7 @@ classdef review_app < matlab.apps.AppBase
 
                 app.b_param = new_b;
                 app.b_param_continuous = new_b;
-                
+
                 plot_latency(app)
                 update_param_displays(app);    
             end
@@ -569,6 +581,11 @@ classdef review_app < matlab.apps.AppBase
             app.preferencesItem = uimenu(app.settingsMenu);
             app.preferencesItem.Text = 'Preferences';
             app.preferencesItem.MenuSelectedFcn = createCallbackFcn(app, @display_settings_window, true);
+
+            % Add a submenu item - grand average
+            app.grandAverageItem = uimenu(app.settingsMenu);
+            app.grandAverageItem.Text = 'Grand Average';
+            app.grandAverageItem.MenuSelectedFcn = createCallbackFcn(app, @display_ga_window, true);
 
             % % Create the "Compare" menu
             % app.compareMenu = uimenu(app.review);
