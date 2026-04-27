@@ -373,10 +373,6 @@ classdef review_app < matlab.apps.AppBase
 
             get_grand_averages(app);
 
-            if isempty(app.ga_latencies) || any(isnan(app.ga_latencies))
-                compute_ga_latencies(app);
-            end
-
             % Initialize the matrix of reviews
             flag_for_review(app);
 
@@ -615,6 +611,12 @@ classdef review_app < matlab.apps.AppBase
             set_window_positions(app)
 
             set_component_positions(app)
+
+            % If ga_latencies are not computed yet, have them specified
+            if isempty(app.ga_latencies) || any(isnan(app.ga_latencies))
+                compute_ga_latencies(app);
+                display_ga_window(app);
+            end
         end
     end
 
