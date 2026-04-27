@@ -30,7 +30,7 @@ classdef review_app < matlab.apps.AppBase
         ga_latency_label      matlab.ui.control.Label
         ga_btn_apply        matlab.ui.control.Button
         ga_bin_info     matlab.ui.control.Label
-        ga_info_box   matlab.ui.control.TextArea
+        ga_info_btn     matlab.ui.control.StateButton
 
         % === SETTINGS WINDOW ===
         settings_window      matlab.ui.Figure

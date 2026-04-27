@@ -1,8 +1,10 @@
 function display_ga_window(app, event)
 
-    % Create window
+    % =========================
+    % WINDOW
+    % =========================
     app.ga_window = uifigure('Name', 'Grand Average', ...
-        'Position', [300, 300, 560, 520]);
+        'Position', [300, 300, 560, 480]);
 
     % =========================
     % DATA
@@ -11,33 +13,41 @@ function display_ga_window(app, event)
     app.ga_latencies = nan(nBins, 1);
 
     % =========================
-    % AXES
+    % AXES (moved up → removes top dead space)
     % =========================
     app.ga_axes = uiaxes(app.ga_window, ...
-        'Position', [60 170 440 300]);
+        'Position', [60 155 440 310]);
 
     % =========================
     % BIN SELECTOR + INFO ROW
     % =========================
     uilabel(app.ga_window, ...
-        'Position', [60 135 80 20], ...
+        'Position', [60 120 80 20], ...
         'Text', 'Bin:');
 
     app.ga_bin_dropdown = uidropdown(app.ga_window, ...
-        'Position', [100 135 100 22], ...
+        'Position', [100 120 100 22], ...
         'Items', string(1:nBins), ...
         'Value', "1", ...
         'ValueChangedFcn', @(src,event) update_ga_plot(app));
 
-    % Bin overview label
     app.ga_bin_info = uilabel(app.ga_window, ...
-        'Position', [220 135 300 20], ...
-        'Text', ['Bins requiring latencies: ' num2str(nBins)]);
+        'Position', [220 120 250 20], ...
+        'Text', sprintf('Bins: %d', nBins));
 
     % =========================
-    % BUTTON ROW (clean grouping)
+    % INFO BUTTON (replaces textbox)
     % =========================
-    btnY = 95;
+    app.ga_info_btn = uibutton(app.ga_window, ...
+        'state', ...
+        'Text', '? Info', ...
+        'Position', [470 120 70 22], ...
+        'ValueChangedFcn', @(src,event) toggle_ga_info(app));
+
+    % =========================
+    % BUTTON ROW (compact + aligned)
+    % =========================
+    btnY = 80;
 
     app.ga_btn_peak = uibutton(app.ga_window, ...
         'push', ...
@@ -60,28 +70,15 @@ function display_ga_window(app, event)
     app.ga_btn_apply = uibutton(app.ga_window, ...
         'push', ...
         'Text', 'Apply & Close', ...
-        'Position', [330 btnY 130 28], ...
-        'ButtonPushedFcn', @(src,event) apply_ga_latency(app));
+        'Position', [330 btnY 150 28], ...
+        'ButtonPushedFcn', @(src,event) apply_ga_latency(app), ...
+        'Enable', 'off');
 
     % =========================
-    % INSTRUCTION BOX
-    % =========================
-    app.ga_info_box = uitextarea(app.ga_window, ...
-        'Position', [60 10 440 70], ...
-        'Editable', 'off', ...
-        'Value', {
-            'Instructions:'
-            '1. Select a bin from the dropdown'
-            '2. Click on the plot OR use Peak/Area buttons'
-            '3. Adjust latencies per bin'
-            '4. Press "Apply & Close" to save changes'
-        });
-
-    % =========================
-    % LABEL (live latency)
+    % LIVE LATENCY LABEL
     % =========================
     app.ga_latency_label = uilabel(app.ga_window, ...
-        'Position', [60 110 300 20], ...
+        'Position', [60 55 300 20], ...
         'Text', 'Latency: -');
 
     % =========================
@@ -90,10 +87,27 @@ function display_ga_window(app, event)
     app.ga_window.WindowButtonDownFcn = ...
         @(src, event) ga_click_callback(app);
 
-    % Initial plot
+    % =========================
+    % INITIAL STATE
+    % =========================
     update_ga_plot(app);
 end
 
+function toggle_ga_info(app)
+
+    if app.ga_info_btn.Value
+
+        uialert(app.ga_window, ...
+            ['Instructions:' newline ...
+            '1. Select a bin' newline ...
+            '2. Click plot OR use Peak/Area' newline ...
+            '3. Adjust per bin' newline ...
+            '4. Apply when done'], ...
+            'Info');
+
+        app.ga_info_btn.Value = false;
+    end
+end
 
 function update_ga_plot(app)
 
