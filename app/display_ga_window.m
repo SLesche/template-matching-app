@@ -153,18 +153,18 @@ function clear_latency(app)
     update_ga_plot(app);
 end
 
-function apply_ga_latency(app)
-
-    % === Recompute all b params based on GA latencies ===
-
-    %TODO
-    
+function apply_ga_latency(app)    
     disp('GA latencies applied:');
     disp(app.ga_latencies);
+
 
     % === CLOSE WINDOW ===
     if isvalid(app.ga_window)
         delete(app.ga_window);
+
+        recompute_latencies(app);
+        plot_latency(app);
+        update_overview_table(app);
     end
 
 end
