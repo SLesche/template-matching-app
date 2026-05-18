@@ -1,14 +1,13 @@
 function update_plot(app)
     hold(app.erp_display, 'on');
-    %{
-    [corr, ~, latency, ~, a, b] = get_matching_results(app);
+    
+    %{ 
+    % This is too slow at the moment
+        [~, ~, latency, ~, ~] = extract_optimized_params(app);
 
-    if app.fitting_approach == "corr"
-        plot_color = 'red';
-    elseif app.fitting_approach == "minsq"
-        plot_color = 'blue';
-    end
+    update_line_color = "black";
     %}
+
 
     delete(app.ga_plot)
     %delete(app.matched_xline)
@@ -30,7 +29,7 @@ function update_plot(app)
 
     % Maybe update fit / latency here?
     app.ga_plot = plot(matched_ga_x, matched_ga_y, "--", 'DisplayName', 'Grand Average Waveform', 'Parent', app.erp_display);
-    %app.matched_xline = xline(app.erp_display, latency, 'Color', plot_color);
+    %app.matched_xline = xline(app.erp_display, latency, 'Color', update_line_color); 
 
     hold(app.erp_display, 'off');
 

@@ -19,6 +19,20 @@ classdef review_app < matlab.apps.AppBase
 
         settingsMenu         matlab.ui.container.Menu
         preferencesItem      matlab.ui.container.Menu
+        grandAverageItem     matlab.ui.container.Menu
+        % === GA WINDOW ===
+        ga_window          matlab.ui.Figure
+        ga_axes            matlab.ui.control.UIAxes
+        ga_bin_dropdown    matlab.ui.control.DropDown
+        ga_btn_peak           matlab.ui.control.Button
+        ga_btn_area           matlab.ui.control.Button
+        ga_btn_clear          matlab.ui.control.Button
+        ga_latency_label      matlab.ui.control.Label
+        ga_btn_apply        matlab.ui.control.Button
+        ga_bin_info     matlab.ui.control.Label
+        ga_info_btn     matlab.ui.control.StateButton
+
+        % === SETTINGS WINDOW ===
         settings_window      matlab.ui.Figure
             positiveUpField      matlab.ui.control.CheckBox
             lineWidthField       matlab.ui.control.NumericEditField
@@ -87,6 +101,7 @@ classdef review_app < matlab.apps.AppBase
         ga_mat double % Matrix for storing grand average information
         ga_latencies double % Latencies of the grand average, should be size [1, n_bins]
         cfg struct % The configuration structure for the data
+        bin_labels cell % The labels for the bins, should be size [1, n_bins]
         
         % Init ERP number and bin
         erp_num double % ERP number
@@ -118,8 +133,15 @@ classdef review_app < matlab.apps.AppBase
             review_method = -1; % rejected, so -1
             write_info(app, review_method, app.erp_num, app.bin_num, a, b, latency, fit_cor, fit_dist)
 
-            jump_to_next_review(app)
-
+            % move to next review
+            if app.settings.auto_jump_behavior == "Jump to next review"
+                % move ireview
+                jump_to_next_review(app)
+            elseif app.settings.auto_jump_behavior == "Move to next ERP"
+                % move ireview
+                go_to_next_erp(app)
+            end
+            
             load_new_plot(app)
         end
 
@@ -304,6 +326,36 @@ classdef review_app < matlab.apps.AppBase
             %set_window_positions(app);
             set_component_positions(app);
         end
+
+        function erp_displayButtonDown(app, src, event)
+            % Get click location in axes coordinates
+            cp = app.erp_display.CurrentPoint;
+            x = cp(1,1);
+            y = cp(1,2);
+        
+            % Get axis limits
+            xl = xlim(app.erp_display);
+            yl = ylim(app.erp_display);
+        
+            % Check if click is inside the visible axes region
+            insideAxes = x >= xl(1) && x <= xl(2) && ...
+                         y >= yl(1) && y <= yl(2);
+        
+            if insideAxes
+                %disp(['Clicked ERP axes at: ', num2str(x), ', ', num2str(y)]);
+
+                % Convert click to proper b param
+                ga_latency = app.ga_latencies(app.bin_num);
+
+                new_b = x / ga_latency;
+
+                app.b_param = new_b;
+                app.b_param_continuous = new_b;
+
+                plot_latency(app)
+                update_param_displays(app);    
+            end
+        end
         
     end
 
@@ -340,12 +392,15 @@ classdef review_app < matlab.apps.AppBase
             app.review.SizeChangedFcn = @(src, event) on_review_resize(app);
 
 
+            % Allow clicks in the entire app
+            app.review.WindowButtonDownFcn = @(src, event) erp_displayButtonDown(app, src, event);
+
             % Create erp_display
             app.erp_display = uiaxes(app.review);
             xlabel(app.erp_display, 'X')
             ylabel(app.erp_display, 'Y')
             zlabel(app.erp_display, 'Z')
-            app.erp_display.ButtonDownFcn = createCallbackFcn(app, @erp_displayButtonDown, true);
+            %app.erp_display.ButtonDownFcn = createCallbackFcn(app, @erp_displayButtonDown, true);
             %app.erp_display.Position = [38 219 633 306];
 
             % Create fit_display
@@ -526,6 +581,11 @@ classdef review_app < matlab.apps.AppBase
             app.preferencesItem.Text = 'Preferences';
             app.preferencesItem.MenuSelectedFcn = createCallbackFcn(app, @display_settings_window, true);
 
+            % Add a submenu item - grand average
+            app.grandAverageItem = uimenu(app.settingsMenu);
+            app.grandAverageItem.Text = 'Grand Average';
+            app.grandAverageItem.MenuSelectedFcn = createCallbackFcn(app, @display_ga_window, true);
+
             % % Create the "Compare" menu
             % app.compareMenu = uimenu(app.review);
             % app.compareMenu.Text = 'Compare';
@@ -552,6 +612,19 @@ classdef review_app < matlab.apps.AppBase
             set_window_positions(app)
 
             set_component_positions(app)
+
+            % If ga_latencies are not computed yet, have them specified
+            if isempty(app.ga_latencies) || any(isnan(app.ga_latencies))
+                h = warndlg( ...
+                    "No grand average latencies specified yet. " + ...
+                    "Please pick GA latencies in the 'Grand Average' window and apply.", ...
+                    "Missing Grand Average Latencies", ...
+                    "modal");
+            
+                uiwait(h);
+
+                display_ga_window(app);
+            end
         end
     end
 
