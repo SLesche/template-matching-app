@@ -614,6 +614,14 @@ classdef review_app < matlab.apps.AppBase
 
             % If ga_latencies are not computed yet, have them specified
             if isempty(app.ga_latencies) || any(isnan(app.ga_latencies))
+                h = warndlg( ...
+                    "No grand average latencies specified yet. " + ...
+                    "Please pick GA latencies in the 'Grand Average' window and apply.", ...
+                    "Missing Grand Average Latencies", ...
+                    "modal");
+            
+                uiwait(h);
+
                 display_ga_window(app);
             end
         end
