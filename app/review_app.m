@@ -101,6 +101,7 @@ classdef review_app < matlab.apps.AppBase
         ga_mat double % Matrix for storing grand average information
         ga_latencies double % Latencies of the grand average, should be size [1, n_bins]
         cfg struct % The configuration structure for the data
+        bin_labels cell % The labels for the bins, should be size [1, n_bins]
         
         % Init ERP number and bin
         erp_num double % ERP number

@@ -1,10 +1,10 @@
 % Specify review params
 function specify_review_params(app)
     % Prompt the user for input using a dialog box
-    prompt = {'Name of dataset:', 'Name of time vector:', 'Name of configuration', 'Name of results matrix (optional):', 'Name of GA latencies (optional):'};
+    prompt = {'Name of dataset:', 'Name of time vector:', 'Name of configuration', 'Name of results matrix (optional):', 'Name of GA latencies (optional):', 'Bin Labels (optional):'};
     dlgTitle = 'Set Review Params';
     numLines = 1;
-    defaultInput = {'erp_data', 'time_vec', 'cfg', 'results_mat', ''};
+    defaultInput = {'erp_data', 'time_vec', 'cfg', 'results_mat', '', ''};
 
     userInput = inputdlg(prompt, dlgTitle, numLines, defaultInput);
 
@@ -42,5 +42,16 @@ function specify_review_params(app)
         end
     else
         app.ga_latencies = nan(size(app.erp_mat, 4), 1);
+    end
+
+    if ~isempty(userInput{6})
+        app.bin_labels = evalin('base', userInput{6});
+        n_bins = size(app.erp_mat, 4);
+        
+        if length(app.bin_labels) ~= n_bins
+            error('This cell should contain one label per bin');
+        end
+    else
+        app.bin_labels = {};
     end
 end

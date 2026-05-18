@@ -54,6 +54,9 @@ cfg.extreme_b = 1.5; % Multiplier for extreme value detection in review app
 %% Or load previous results
 results_mat = reshape(readmatrix('data/results_mat'), 142, 2, 5);
 
+% Optional: Bin Labels
+bin_labels = {'congruent', 'incongruent'};
+
 %% Start review app
 review_app
 
